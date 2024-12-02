@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import { renderTemplate } from './render-templates.service';
+import { generateDockerCompose } from '../helper/generate-docker-compose.helper';
 
 export async function updateDockerCompose(
   serviceName: string,
@@ -10,12 +10,14 @@ export async function updateDockerCompose(
   const dockerComposeFile = './docker-compose.yml';
   const dockerServiceName = `${serviceName}-db`;
 
+  // Ensure docker-compose.yml exists
   if (!fs.existsSync(dockerComposeFile)) {
-    throw new Error('docker-compose.yml not found!');
+    generateDockerCompose();
   }
 
   let dockerComposeContent = await fs.readFile(dockerComposeFile, 'utf8');
 
+  // Check if the service already exists
   if (dockerComposeContent.includes(dockerServiceName)) {
     console.log(
       `Service "${dockerServiceName}" already exists in docker-compose.yml.`,
@@ -23,6 +25,7 @@ export async function updateDockerCompose(
     return;
   }
 
+  // Define the new service
   const newService = `
   ${dockerServiceName}:
     container_name: ${dockerServiceName}
@@ -39,25 +42,32 @@ export async function updateDockerCompose(
       - ${serviceName}-data:/var/lib/mysql
   `;
 
-  dockerComposeContent.replace('services:', `services:\n${newService}`);
-  if (!dockerComposeContent.includes('db-network')) {
-    dockerComposeContent.concat('\nnetworks:\n  db-network:\nvolumes:\n');
+  // Add the new service under "services:"
+  dockerComposeContent = dockerComposeContent.replace(
+    'services:',
+    `services:\n${newService}`,
+  );
+
+  // Ensure "networks:" exists
+  if (!dockerComposeContent.includes('networks:')) {
+    dockerComposeContent += '\nnetworks:\n  db-network:\n';
   }
 
-  // Add the new volume for the service
+  // Ensure "volumes:" exists and add the new volume
   if (!dockerComposeContent.includes('volumes:')) {
     dockerComposeContent += '\nvolumes:\n';
   }
   const volumeEntry = `  ${serviceName}-data:`;
   if (!dockerComposeContent.includes(volumeEntry)) {
     dockerComposeContent = dockerComposeContent.replace(
-      'volumes:',
-      `volumes:\n${volumeEntry}`,
+      'volumes:\n',
+      `volumes:\n${volumeEntry}\n`,
     );
   }
 
+  // Write the updated content back to docker-compose.yml
   await fs.writeFile(dockerComposeFile, dockerComposeContent, 'utf8');
   console.log(
-    `Updated docker-compose.yml with service "${dockerServiceName}".`,
+    `Updated docker-compose.yml with service "${dockerServiceName}" and volume "${serviceName}-data}".`,
   );
 }

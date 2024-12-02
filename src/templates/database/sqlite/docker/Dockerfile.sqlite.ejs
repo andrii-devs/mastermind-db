@@ -1,0 +1,4 @@
+FROM nouchka/sqlite3:latest
+
+COPY ./<%= dbName %>.db /data/<%= dbName %>.db
+EXPOSE <%= port %>

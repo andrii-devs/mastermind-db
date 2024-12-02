@@ -1,0 +1,6 @@
+FROM postgres:latest
+
+ENV POSTGRES_USER=whsUser
+ENV POSTGRES_PASSWORD=whsPassword
+ENV POSTGRES_DB=whs_db
+EXPOSE 5432

@@ -8,7 +8,6 @@ export async function generateFiles(serviceName: string, fileTypes: string[]) {
   const config = getConfig();
   const rootDir = getRootDir();
 
-  console.log(`Get config ${config} and rootDir ${rootDir}`);
 
   for (const type of fileTypes) {
     switch (type) {

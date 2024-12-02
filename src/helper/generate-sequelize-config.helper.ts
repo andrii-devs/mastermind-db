@@ -19,6 +19,13 @@ export const getRootDir = (): string => {
   return path.resolve(config.rootDir);
 };
 
+export const getTemplatesDir = (): string => {
+  const config = getConfig();
+  return path.resolve(config.templatesDir);
+};
+
+
+
 export const getConfigPath = (): string => {
   const projectRoot = path.resolve();
   const configPath = path.join(projectRoot, CONFIG_FILE_NAME);

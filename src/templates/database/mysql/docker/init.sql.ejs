@@ -1,0 +1,4 @@
+CREATE DATABASE IF NOT EXISTS <%= dbName %>;
+CREATE USER IF NOT EXISTS '<%= dbUsername %>'@'%' IDENTIFIED BY '<%= dbPassword %>';
+GRANT ALL PRIVILEGES ON <%= dbName %>.* TO '<%= dbUsername %>'@'%';
+FLUSH PRIVILEGES;

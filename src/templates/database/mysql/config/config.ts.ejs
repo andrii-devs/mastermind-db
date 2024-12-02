@@ -1,0 +1,42 @@
+import { Dialect } from "sequelize";
+
+
+interface ISequelizeConfig {
+  [key: string]: {
+    dialect: Dialect;
+    host: string;
+    username: string;
+    password: string;
+    database: string;
+    port: number;
+  };
+}
+
+const config: ISequelizeConfig = {
+  development: {
+    dialect: "<%= dbType %>",
+    host: process.env.DB_HOST",
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: Number(process.env.DB_PORT),
+  },
+  test: {
+    dialect: "<%= dbType %>",
+    host: process.env.DB_HOST || "127.0.0.1",
+    username: process.env.DB_USERNAME || "root",
+    password: process.env.DB_PASSWORD || "password",
+    database: process.env.DB_NAME || "db_test",
+    port: Number(process.env.DB_PORT) || 3306,
+  },
+  production: {
+    dialect: "<%= dbType %>",
+    host: process.env.DB_HOST || "127.0.0.1",
+    username: process.env.DB_USERNAME || "root",
+    password: process.env.DB_PASSWORD || "password",
+    database: process.env.DB_NAME || "db",
+    port: Number(process.env.DB_PORT) || 3306,
+  },
+};
+
+export = config;

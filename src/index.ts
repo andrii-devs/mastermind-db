@@ -11,7 +11,6 @@ const packageJson = JSON.parse(
   fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'),
 );
 const version = packageJson.version;
-
 const program = new Command();
 
 program
@@ -30,7 +29,7 @@ program
 
 // Define `wizard` command
 program
-  .command('wizard')
+  .command('start')
   .description('Run the interactive setup wizard.')
   .action(async () => {
     printLogo(version);

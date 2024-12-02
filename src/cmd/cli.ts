@@ -11,6 +11,7 @@ import {
   checkIfConfigFileExists,
   getConfigPath,
 } from '../helper/generate-sequelize-config.helper';
+import { createDatabaseAction } from '../service/create-database.service';
 
 dotenv.config();
 
@@ -29,50 +30,7 @@ export async function runCLI() {
   ]);
 
   if (action === 'Create Database') {
-    const { dbType, serviceName, fileTypes } = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'dbType',
-        message: 'Select your database:',
-        choices: Object.values(DBType),
-        default: 'MySQL',
-      },
-      {
-        type: 'input',
-        name: 'serviceName',
-        message: 'Enter a service name (e.g., auth, whatsapp):',
-        validate: (input) =>
-          input.trim() !== '' ? true : 'Service name cannot be empty',
-      },
-      {
-        type: 'checkbox',
-        name: 'fileTypes',
-        message: 'Select additional files to generate',
-        choices: ['Migrations', 'Models', 'Seeders'],
-      },
-    ]);
-
-    console.log(
-      `Setting up ${dbType} database for service "${serviceName}"...`,
-    );
-
-    await generateFiles(serviceName, fileTypes);
-    const dbName = `${serviceName}_db`;
-    const port = await allocatePort(dbType);
-
-    if (!fs.existsSync('./docker-compose.yml')) {
-      console.log('No docker-compose.yml found. Creating a new one...');
-      fs.writeFileSync(
-        './docker-compose.yml',
-        'version: "3.8"\nservices:\nnetworks:\n  db-network:\nvolumes:\n',
-        'utf8',
-      );
-    }
-
-    await scaffoldDatabase(serviceName, dbType, dbName, port);
-    await updateDockerCompose(serviceName, dbType, port, dbName);
-
-    console.log(`Setup for "${serviceName}" complete!`);
+    await createDatabaseAction();
   } else {
     const folders = getServiceFolders();
     if (folders.length === 0) {
