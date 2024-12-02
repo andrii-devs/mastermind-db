@@ -1,0 +1,14 @@
+import { QueryInterface } from 'sequelize';
+
+export = {
+  async up(queryInterface: QueryInterface): Promise<void> {
+    await queryInterface.bulkInsert('<%= tableName %>', [
+      { name: 'Example Name 1', createdAt: new Date(), updatedAt: new Date() },
+      { name: 'Example Name 2', createdAt: new Date(), updatedAt: new Date() },
+    ]);
+  },
+
+  async down(queryInterface: QueryInterface): Promise<void> {
+    await queryInterface.bulkDelete('<%= tableName %>', {});
+  },
+};
