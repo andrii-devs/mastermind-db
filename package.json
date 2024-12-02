@@ -10,7 +10,8 @@
     "build": "tsc && npm run copy-templates",
     "copy-templates": "cp -R templates dist/",
     "start": "ts-node src/index.ts",
-    "lint": "eslint 'src/**/*.{ts,js}' --fix"
+    "lint": "eslint 'src/**/*.{ts,js}' --fix",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
