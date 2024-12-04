@@ -1,19 +1,18 @@
 import dotenv from 'dotenv';
 import inquirer from 'inquirer';
-import fs from 'fs';
-import { DBType } from '../types';
-import { allocatePort } from '../service/allocate-port.service';
-import { scaffoldDatabase } from '../service/scaffold-database.service';
-import { updateDockerCompose } from '../service/update-docker-compose.service';
 import { getServiceFolders } from '../utils/file-path.utils';
-import { generateFiles } from '../helper/generate-files.helper';
+import { generateSequelizeFiles } from '../helper/sequelize-files.helper';
 import {
   checkIfConfigFileExists,
   getConfigPath,
-} from '../helper/generate-sequelize-config.helper';
+  getRootDir,
+} from '../helper/sequelize-blueprint-config.helper';
 import { createDatabaseAction } from '../service/create-database.service';
 
 dotenv.config();
+
+const CREATE_DATABASE = 'Create a New Database';
+const GENERATE_FILES = 'Generate Files (Migrations/Models/Seeders)';
 
 export async function runCLI() {
   if (!checkIfConfigFileExists(getConfigPath())) {
@@ -24,18 +23,19 @@ export async function runCLI() {
     {
       type: 'list',
       name: 'action',
-      message: 'What do you want to do?',
-      choices: ['Create Database', 'Create Migrations/Models/Seeders'],
+      message: 'What would you like to do?',
+      choices: [CREATE_DATABASE, GENERATE_FILES],
     },
   ]);
 
-  if (action === 'Create Database') {
+  if (action === CREATE_DATABASE) {
     await createDatabaseAction();
   } else {
     const folders = getServiceFolders();
+    const baseDir = getRootDir();
     if (folders.length === 0) {
       console.log(
-        'No services found in "src". Please create a database first.',
+        `No existing services found in ${baseDir}. Please create a database first.`,
       );
       return;
     }
@@ -44,17 +44,17 @@ export async function runCLI() {
       {
         type: 'list',
         name: 'serviceName',
-        message: 'Select a service:',
+        message: 'Select the service for which you want to generate files:',
         choices: folders,
       },
       {
         type: 'checkbox',
         name: 'fileTypes',
-        message: 'Select file types to generate:',
+        message: 'Select the type(s) of files to generate:',
         choices: ['Migrations', 'Models', 'Seeders'],
       },
     ]);
 
-    await generateFiles(serviceName, fileTypes);
+    await generateSequelizeFiles(serviceName, fileTypes);
   }
 }

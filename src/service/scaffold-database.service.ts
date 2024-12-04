@@ -1,10 +1,10 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { renderTemplate } from './render-templates.service';
+import { renderTemplate } from '../helper/render-templates.helper';
 import {
   getConfigPath,
   getRootDir,
-} from '../helper/generate-sequelize-config.helper';
+} from '../helper/sequelize-blueprint-config.helper';
 import { DBType } from '../types';
 
 export async function scaffoldDatabase(
@@ -75,7 +75,7 @@ export async function scaffoldDatabase(
   // Generate init.sql for MySQL
   if (dbType === DBType.MySQL || dbType === DBType.PostgreSQL) {
     await renderTemplate(
-      `database/${dbType}/init.sql`,
+      `database/${dbType}/docker/init.sql.ejs`,
       `${baseDir}/docker/init.sql`,
       {
         dbName,

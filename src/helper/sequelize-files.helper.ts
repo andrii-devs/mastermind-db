@@ -1,13 +1,15 @@
 import path from 'path';
 import { getTimestamp } from '../utils/file-path.utils';
-import { renderTemplate } from '../service/render-templates.service';
+import { renderTemplate } from './render-templates.helper';
 import inquirer from 'inquirer';
-import { getConfig, getRootDir } from './generate-sequelize-config.helper';
+import { getConfig, getRootDir } from './sequelize-blueprint-config.helper';
 
-export async function generateFiles(serviceName: string, fileTypes: string[]) {
+export async function generateSequelizeFiles(
+  serviceName: string,
+  fileTypes: string[],
+) {
   const config = getConfig();
   const rootDir = getRootDir();
-
 
   for (const type of fileTypes) {
     switch (type) {

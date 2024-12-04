@@ -1,7 +1,7 @@
 import ejs from 'ejs';
 import fs from 'fs-extra';
 import path from 'path';
-import { getTemplatesDir } from '../helper/generate-sequelize-config.helper';
+import { getTemplatesDir } from './sequelize-blueprint-config.helper';
 
 export async function renderTemplate(
   templatePath: string,
