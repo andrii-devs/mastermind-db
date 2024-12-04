@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+<% for (const service of services) { %>
+  <%= service.name %>:
+    container_name: <%= service.containerName %>
+    build:
+      context: <%= service.context %>
+      dockerfile: <%= service.dockerfile %>
+    restart: unless-stopped
+    env_file: <%= service.envFile %>
+    networks:
+      - db-network
+    ports:
+      - "<%= service.allocatedPort %>:<%= service.dbPort %>"
+    volumes:
+      - <%= service.volumeName %>:<%= service.volumePath %>
+<% } %>
+
+networks:
+  db-network:
+
+volumes:
+<% for (const volume of volumes) { %>
+  <%= volume %>:
+<% } %>
