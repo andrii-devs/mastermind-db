@@ -1,7 +1,4 @@
-import {
-  getConfig,
-  getRootDir,
-} from '../src/helper/generate-sequelize-config.helper';
+import { getRootDir } from '../src/helper/sequelize-blueprint-config.helper';
 import fs from 'fs-extra';
 
 jest.mock('fs-extra');

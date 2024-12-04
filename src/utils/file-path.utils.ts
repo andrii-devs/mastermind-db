@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs-extra';
-import { getRootDir } from '../helper/generate-sequelize-config.helper';
+import { getRootDir } from '../helper/sequelize-blueprint-config.helper';
 
 export const getServiceFolders = (): string[] => {
   const rootFolder = getRootDir();
