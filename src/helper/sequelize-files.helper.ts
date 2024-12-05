@@ -10,7 +10,6 @@ export async function generateSequelizeFiles(
 ) {
   const config = getConfig();
   const rootDir = getRootDir();
-
   for (const type of fileTypes) {
     switch (type) {
       case 'Migrations':
@@ -32,9 +31,13 @@ export async function generateSequelizeFiles(
           fileName,
         );
 
-        await renderTemplate('migrations/migration.ejs', migrationPath, {
-          migrationName,
-        });
+        await renderTemplate(
+          'sequelize/migrations/migration.ejs',
+          migrationPath,
+          {
+            migrationName,
+          },
+        );
         console.log(`Generated migration: ${migrationPath}`);
 
         break;
@@ -66,7 +69,7 @@ export async function generateSequelizeFiles(
           seedFileName,
         );
 
-        await renderTemplate('seeders/seed.ejs', seederPath, {
+        await renderTemplate('sequelize/seeders/seed.ejs', seederPath, {
           seederName,
           tableName: seedTableName,
         });
@@ -99,7 +102,7 @@ export async function generateSequelizeFiles(
           modelFileName,
         );
 
-        await renderTemplate('models/model.ejs', filePath, {
+        await renderTemplate('/sequelize/models/model.ejs', filePath, {
           modelName,
           tableName,
         });

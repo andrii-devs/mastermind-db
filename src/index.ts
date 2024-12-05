@@ -6,6 +6,10 @@ import { Command } from 'commander';
 import { printLogo } from './utils/print-logo.utils';
 import { runCLI } from './cmd/cli';
 import { initCLI } from './cmd/init';
+import {
+  checkIfConfigFileExists,
+  getConfigPath,
+} from './helper/sequelize-blueprint-config.helper';
 
 const packageJson = JSON.parse(
   fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'),
@@ -33,6 +37,10 @@ program
   .description('Run the interactive setup wizard.')
   .action(async () => {
     printLogo(version);
+     if (!checkIfConfigFileExists(getConfigPath())) {
+       process.exit(1);
+     }
+
     await runCLI();
   });
 

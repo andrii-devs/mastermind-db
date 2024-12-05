@@ -1,9 +1,9 @@
 import inquirer from 'inquirer';
 import { DBType } from '../types';
 import { allocatePort } from '../helper/allocate-port.helper';
-import { scaffoldDatabase } from './scaffold-database.service';
-import { scaffoldDockerCompose } from './scaffold-docker-compose.service';
-import { scaffoldSequelizeFiles } from './scaffold-sequelize-files.service';
+import { scaffoldDatabase } from '../service/scaffold-database.service';
+import { scaffoldDockerCompose } from '../service/scaffold-docker-compose.service';
+import { scaffoldSequelizeFiles } from '../service/scaffold-sequelize-files.service';
 
 export async function createDatabaseAction() {
   const { dbType, serviceName } = await inquirer.prompt([
