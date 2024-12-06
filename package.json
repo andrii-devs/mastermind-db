@@ -26,6 +26,8 @@
     "inquirer": "^12.1.0",
     "js-yaml": "^4.1.0",
     "sequelize": "^6.37.5",
+    "sequelize-cli": "^6.6.2",
+    "sequelize-typescript": "^2.1.6",
     "shelljs": "^0.8.5"
   },
   "devDependencies": {
