@@ -1,7 +1,7 @@
 {
   "rootDir": "./build",
   "templatesDir": "./src/templates",
-  "migrationsDir": "./sequelize/migrations",
-  "modelsDir": "./sequelize/models",
-  "seedersDir": "./sequelize/seeders"
+  "migrationsDir": "/sequelize/migrations",
+  "modelsDir": "/sequelize/models",
+  "seedersDir": "/sequelize/seeders"
 }
