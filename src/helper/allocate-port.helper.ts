@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 
 export async function allocatePort(dbType: string): Promise<number> {
-  const basePorts = { mysql: 3306, postgresql: 5432, mongodb: 27017 } as any;
+  const basePorts = { MySQL: 3306, PostgreSQL: 5432, SQLite: 0 } as any;
   const basePort = basePorts[dbType] || 3306;
 
   let port = basePort;

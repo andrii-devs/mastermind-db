@@ -1,5 +1,11 @@
 import fs from 'fs-extra';
 import yaml from 'js-yaml';
+import { getRootDir } from './sequelize-blueprint-config.helper';
+import path from 'path';
+
+function sanitizeName(name: string): string {
+  return name.trim().replace(/\s+/g, '-');
+}
 
 export async function updateDockerCompose(
   serviceName: string,
@@ -7,6 +13,13 @@ export async function updateDockerCompose(
   port: number,
 ) {
   const dockerComposeFile = './docker-compose.yml';
+  const rootDir = getRootDir();
+  const serviceDir = path.join(rootDir, serviceName);
+
+  const relativeContextPath = path.relative(
+    path.dirname(dockerComposeFile),
+    path.join(serviceDir, 'docker'),
+  );
 
   const volumeMappingPaths: Record<string, string> = {
     mysql: '/var/lib/mysql',
@@ -19,10 +32,12 @@ export async function updateDockerCompose(
     sqlite: 0, // SQLite doesn't need port mapping
   };
 
+  const sanitizedServiceName = sanitizeName(serviceName);
+  const serviceKey = `${sanitizedServiceName}-db`;
+  const volumeKey = `${sanitizedServiceName}-data`;
+
   const volumePath = volumeMappingPaths[dbType] || '/data/unknown';
   const dbPort = defaultPorts[dbType] || 3306;
-  const serviceKey = `${serviceName}-db`;
-  const volumeKey = `${serviceName}-data`;
 
   let dockerCompose: any = {
     version: '3.8',
@@ -46,11 +61,11 @@ export async function updateDockerCompose(
     dockerCompose.services[serviceKey] = {
       container_name: serviceKey,
       build: {
-        context: `./src/${serviceName}/docker`,
+        context: relativeContextPath,
         dockerfile: 'Dockerfile',
       },
       restart: 'unless-stopped',
-      env_file: `./src/${serviceName}/docker/.env`,
+      env_file: path.join(relativeContextPath, '.env'),
       networks: ['db-network'],
       ports: [`${port}:${dbPort}`],
       volumes: [`${volumeKey}:${volumePath}`],
@@ -81,7 +96,7 @@ export async function generateDockerCompose() {
     const dockerCompose = yaml.dump({
       version: '3.8',
       services: {},
-      network: {
+      networks: {
         'db-network': {},
       },
       volumes: {},

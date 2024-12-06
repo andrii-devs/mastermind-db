@@ -21,16 +21,14 @@ export const getRootDir = (): string => {
 
 export const getTemplatesDir = (): string => {
   const config = getConfig();
+  if (!config.templatesDir || typeof config.templatesDir !== 'string') {
+    throw new Error(`Invalid or missing "templatesDir" in ${CONFIG_FILE_NAME}`);
+  }
   return path.resolve(config.templatesDir);
 };
 
-
-
 export const getConfigPath = (): string => {
-  const projectRoot = path.resolve();
-  const configPath = path.join(projectRoot, CONFIG_FILE_NAME);
-
-  return configPath;
+  return path.resolve(CONFIG_FILE_NAME);
 };
 
 export function checkIfConfigFileExists(configPath: string): boolean {
@@ -40,4 +38,8 @@ export function checkIfConfigFileExists(configPath: string): boolean {
   } else {
     return true;
   }
+}
+
+export function getRelativePath(base: string, target: string): string {
+  return path.relative(base, target);
 }

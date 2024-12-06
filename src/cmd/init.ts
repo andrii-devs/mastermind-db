@@ -5,10 +5,6 @@ import { getConfigPath } from '../helper/sequelize-blueprint-config.helper';
 import { generateDockerCompose } from '../helper/docker-compose.helper';
 
 export function initCLI(): void {
-
-  generateDockerCompose();
-
-  process.exit(0);
   const configPath = getConfigPath();
 
   if (!fs.existsSync(configPath)) {

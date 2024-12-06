@@ -1,0 +1,10 @@
+// .sequelizerc
+const path = require("path");
+require("ts-node/register");
+
+module.exports = {
+  config: path.resolve("./", "config.ts"),
+  "migrations-path": path.resolve("./", "migrations"),
+  "seeders-path": path.resolve("./", "seeders"),
+  "models-path": path.resolve("./", "models"),
+};

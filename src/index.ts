@@ -36,12 +36,11 @@ program
   .command('start')
   .description('Run the interactive setup wizard.')
   .action(async () => {
-    printLogo(version);
-     if (!checkIfConfigFileExists(getConfigPath())) {
-       process.exit(1);
-     }
+    if (!checkIfConfigFileExists(getConfigPath())) {
+      process.exit(1);
+    }
 
-    await runCLI();
+    await runCLI(version);
   });
 
 // Show help if no command is provided

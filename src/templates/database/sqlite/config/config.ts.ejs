@@ -1,20 +1,8 @@
 import { Dialect } from "sequelize";
+import dotenv from "dotenv";
 
-/*
-interface IMySqlEngine {
-  engine: string;
-  charset: string;
-  collate: string;
-}
-*/
+dotenv.config({ path: "./docker/.env" });
 
-/*
-  export const engine:IMySqlEngine ={
-    engine: 'InnoDB',
-    charset: 'utf8mb4',
-    collate: 'utf8mb4_general_ci',
-  }
-*/
 
 interface ISequelizeConfig {
   [key: string]: {
@@ -29,28 +17,28 @@ interface ISequelizeConfig {
 
 const config: ISequelizeConfig = {
   development: {
-    dialect: "<%= dbType %>"",
-    host: process.env.DB_HOST",
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    dialect: "<%= dbType %>"!,
+    host: process.env.DB_HOST!,
+    username: process.env.DB_USERNAME!,
+    password: process.env.DB_PASSWORD!,
+    database: process.env.DB_NAME!,
     port: Number(process.env.DB_PORT),
   },
   test: {
-    dialect: "mysql",
-    host: process.env.DB_HOST || "127.0.0.1",
-    username: process.env.DB_USERNAME || "root",
-    password: process.env.DB_PASSWORD || "password",
-    database: process.env.DB_NAME || "vdashboard_test",
-    port: Number(process.env.DB_PORT) || 3306,
+    dialect: "<%= dbType %>"!,
+    host: process.env.DB_HOST!,
+    username: process.env.DB_USERNAME!,
+    password: process.env.DB_PASSWORD!,
+    database: process.env.DB_NAME!,
+    port: Number(process.env.DB_PORT),
   },
   production: {
     dialect: "mysql",
-    host: process.env.DB_HOST || "127.0.0.1",
-    username: process.env.DB_USERNAME || "root",
-    password: process.env.DB_PASSWORD || "password",
-    database: process.env.DB_NAME || "vdashboard",
-    port: Number(process.env.DB_PORT) || 3306,
+    host: process.env.DB_HOST!,
+    username: process.env.DB_USERNAME!,
+    password: process.env.DB_PASSWORD!,
+    database: process.env.DB_NAME!,
+    port: Number(process.env.DB_PORT),
   },
 };
 

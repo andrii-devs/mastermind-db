@@ -1,10 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import { renderTemplate } from '../helper/render-templates.helper';
-import {
-  getConfigPath,
-  getRootDir,
-} from '../helper/sequelize-blueprint-config.helper';
+import { getRootDir } from '../helper/sequelize-blueprint-config.helper';
 import { DBType } from '../types';
 
 export async function scaffoldDatabase(
@@ -15,7 +12,7 @@ export async function scaffoldDatabase(
 ) {
   const config = getRootDir();
   const baseDir = path.join(config, serviceName);
-  const subfolders = ['migrations', 'models', 'seeders', 'docker'];
+  const subfolders = ['docker', 'sequelize'];
   // Create folders
   await Promise.all(
     subfolders.map((folder) => fs.ensureDir(path.join(baseDir, folder))),
@@ -64,7 +61,7 @@ export async function scaffoldDatabase(
 
   await renderTemplate(
     `database/${dbType}/config/config.ts.ejs`,
-    `${baseDir}/config.ts`,
+    `${baseDir}/sequelize/config.ts`,
     {
       dbType,
       port,
@@ -73,7 +70,7 @@ export async function scaffoldDatabase(
   );
 
   // Generate init.sql for MySQL
-  if (dbType === DBType.MySQL || dbType === DBType.PostgreSQL) {
+  if (dbType === 'mysql' || dbType === 'potgres') {
     await renderTemplate(
       `database/${dbType}/docker/init.sql.ejs`,
       `${baseDir}/docker/init.sql`,

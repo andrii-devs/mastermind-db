@@ -16,7 +16,7 @@ export async function createDatabaseAction() {
     {
       type: 'input',
       name: 'serviceName',
-      message: 'Enter a unique name for the service (e.g., auth, whatsapp):',
+      message: 'Enter a unique name for the service (e.g., auth, store):',
       validate: (input) =>
         input.trim() !== '' ? true : 'Service name cannot be empty',
     },
@@ -28,10 +28,15 @@ export async function createDatabaseAction() {
 
   const dbName = `${serviceName}_db`;
   const port = await allocatePort(dbType);
+  const databaseMap: Record<string, string> = {
+    MySQL: 'mysql',
+    PostgreSQL: 'postgres',
+    SQLite: 'sqlite',
+  };
 
-  await scaffoldDatabase(serviceName, dbType, dbName, port);
-  await scaffoldDockerCompose(serviceName, dbType, port);
-  await scaffoldSequelizeFiles(serviceName);
+  await scaffoldDatabase(serviceName, databaseMap[dbType], dbName, port);
+  await scaffoldSequelizeFiles(serviceName, []);
+  await scaffoldDockerCompose(serviceName, databaseMap[dbType], port);
 
   console.log(`Setup for "${serviceName}" complete!`);
 }
