@@ -7,14 +7,24 @@
   },
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc && npm run copy-templates",
-    "copy-templates": "cp -R templates dist/",
-    "start": "ts-node src/index.ts",
+    "build": "tsc",
+    "postbuild": "npm run copy-templates",
+    "copy-templates": "cp -R src/templates dist/templates",
+    "start": "NODE_ENV=development ts-node src/index.ts",
     "lint": "eslint 'src/**/*.{ts,js}' --fix",
     "test": "jest"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "cli",
+    "sequelize",
+    "blueprint"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "author": "Andrii Devs",
   "license": "ISC",
   "dependencies": {
     "chalk": "^5.3.0",
@@ -25,8 +35,10 @@
     "handlebars": "^4.7.8",
     "inquirer": "^12.1.0",
     "js-yaml": "^4.1.0",
+    "kleur": "^4.1.5",
+    "mysql2": "^3.11.5",
     "sequelize": "^6.37.5",
-    "sequelize-cli": "^6.6.2",
+    "sequelize-cli": "6.2.0",
     "sequelize-typescript": "^2.1.6",
     "shelljs": "^0.8.5"
   },
@@ -38,7 +50,7 @@
     "@types/inquirer": "^9.0.7",
     "@types/jest": "^29.5.14",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^22.10.0",
+    "@types/node": "^22.10.1",
     "eslint": "^9.15.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
