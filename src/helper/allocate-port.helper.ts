@@ -1,4 +1,5 @@
 import fs from 'fs-extra';
+import { logger } from '../utils/logger.utils';
 
 export async function allocatePort(dbType: string): Promise<number> {
   const basePorts = { MySQL: 3306, PostgreSQL: 5432, SQLite: 0 } as any;
@@ -9,17 +10,10 @@ export async function allocatePort(dbType: string): Promise<number> {
     ? await fs.readFile('./docker-compose.yml', 'utf8')
     : '';
 
-  console.log(
-    'Docker compose includes: ',
-    dockerCompose.includes(`${port}:${basePort}`),
-  );
-
-  console.log('Docker compose base ports: ', basePort);
-
   while (dockerCompose.includes(`${port}:${basePort}`)) {
     port++;
   }
 
-  console.log(`Allocated port: ${port}`);
+  logger.info(`Allocated port: ${port}`);
   return port;
 }
