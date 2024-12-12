@@ -3,6 +3,7 @@ import path from 'path';
 import { renderTemplate } from '../helper/render-templates.helper';
 import { getRootDir } from '../helper/sequelize-blueprint-config.helper';
 import { DBType } from '../types';
+import { logger } from '../utils/logger.utils';
 
 export async function scaffoldDatabase(
   serviceName: string,
@@ -69,17 +70,35 @@ export async function scaffoldDatabase(
     },
   );
 
-  // Generate init.sql for MySQL
-  if (dbType === 'mysql' || dbType === 'potgres') {
-    await renderTemplate(
-      `database/${dbType}/docker/init.sql.ejs`,
-      `${baseDir}/docker/init.sql`,
-      {
-        dbName,
-        dbUsername: `${serviceName}_user`,
-        dbPassword: `${serviceName}_password`,
-      },
-    );
+  // Generate init.sql
+
+  switch (dbType) {
+    case 'mysql':
+      await renderTemplate(
+        `database/${dbType}/docker/init.sql.ejs`,
+        `${baseDir}/docker/init.sql`,
+        {
+          dbName,
+          dbUsername: `${serviceName}_user`,
+          dbPassword: `${serviceName}_password`,
+        },
+      );
+      break;
+    case 'potgres':
+      await renderTemplate(
+        `database/${dbType}/docker/init.sql.ejs`,
+        `${baseDir}/docker/init.sql`,
+        {
+          dbName,
+          dbUsername: `${serviceName}User`,
+          dbPassword: `${serviceName}Password`,
+        },
+      );
+      break;
+
+    default:
+      break;
   }
-  console.log(`Scaffolded database structure for "${serviceName}".`);
+
+  logger.success(`Scaffolded database structure for "${serviceName}".`);
 }

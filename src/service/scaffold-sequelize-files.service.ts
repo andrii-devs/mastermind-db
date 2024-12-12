@@ -7,7 +7,6 @@ import { getTimestamp } from '../utils/file-path.utils';
 import path from 'path';
 import { renderTemplate } from '../helper/render-templates.helper';
 import fs from 'fs-extra';
-
 export async function scaffoldSequelizeFiles(
   serviceName: string,
   fileTypes: string[],
@@ -29,7 +28,6 @@ export async function scaffoldSequelizeFiles(
     '.sequelizerc',
   );
   await renderTemplate('/sequelize/sequelizerc.ejs', sequelizercfilePath, {});
-  console.log(`Generated .sequelizerc file ${sequelizercfilePath}`);
 
   if (fileTypes.length > 0) {
     for (const type of fileTypes) {
@@ -39,7 +37,7 @@ export async function scaffoldSequelizeFiles(
             {
               type: 'input',
               name: 'migrationName',
-              message: 'Enter migration name:',
+              message: 'Enter migration name (kebab-case):',
               validate: (input) =>
                 input.trim() !== '' ? true : 'Migration name cannot be empty',
             },
@@ -60,7 +58,6 @@ export async function scaffoldSequelizeFiles(
               migrationName,
             },
           );
-          console.log(`Generated migration: ${migrationPath}`);
 
           break;
         case 'Seeders':
@@ -95,7 +92,7 @@ export async function scaffoldSequelizeFiles(
             seederName,
             tableName: seedTableName,
           });
-          console.log(`Generated seeder: ${seederPath}`);
+
           break;
         case 'Models':
           const { modelName } = await inquirer.prompt([
@@ -128,7 +125,6 @@ export async function scaffoldSequelizeFiles(
             modelName,
             tableName,
           });
-          console.log(`Generated model: ${filePath}`);
 
           break;
         default:
