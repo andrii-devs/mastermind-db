@@ -1,17 +1,20 @@
 import inquirer from 'inquirer';
 import { getServiceFolders } from '../utils/file-path.utils';
-import {
-  getFilesInFolder,
-  runSequelizeCommand,
-} from '../helper/run-sequelize-command.helper';
+import { runSequelizeCommand } from '../helper/run-sequelize-command.helper';
 import { getRootDir } from '../helper/sequelize-blueprint-config.helper';
+import { logger } from '../utils/logger.utils';
+import path from 'path';
+
+const APPLY_ALL_SEED = 'Apply all seeders';
+const UNDO_ALL_SEED = 'Undo all seeders';
+const UNDO_LATEST_SEED = 'Undo the latest seed';
 
 export async function manageSeedersAction(): Promise<void> {
   const services = getServiceFolders();
   const baseDir = getRootDir();
 
   if (services.length === 0) {
-    console.log('No services found. Please create a database first.');
+    logger.error('No services found. Please create a database first.');
     return;
   }
 
@@ -24,65 +27,37 @@ export async function manageSeedersAction(): Promise<void> {
     },
   ]);
 
+  const { environment } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'environment',
+      message: 'Select the environment:',
+      choices: ['development', 'production', 'test'],
+      default: 'development',
+    },
+  ]);
   const { operation } = await inquirer.prompt([
     {
       type: 'list',
       name: 'operation',
       message: `What would you like to do with seeders for "${serviceName}"?`,
-      choices: [
-        'Apply All Seeders',
-        'Apply a Specific Seeder',
-        'Undo All Seeders',
-        'Undo a Specific Seeder',
-      ],
+      choices: [APPLY_ALL_SEED, UNDO_ALL_SEED, UNDO_LATEST_SEED],
     },
   ]);
 
-  const servicePath = `${baseDir}/${serviceName}`;
-  const seederDir = `${servicePath}/seeders`;
+  const servicePath = path.join(baseDir, serviceName);
 
   switch (operation) {
-    case 'Apply All Seeders':
-      await runSequelizeCommand('db:seed:all', servicePath);
+    case APPLY_ALL_SEED:
+      await runSequelizeCommand('db:seed:all', servicePath, environment);
       break;
 
-    case 'Apply a Specific Seeder': {
-      const seeders = getFilesInFolder(seederDir, '.ts');
-      if (seeders.length === 0) {
-        console.log('No seeders found.');
-        return;
-      }
-      const { seeder } = await inquirer.prompt([
-        {
-          type: 'list',
-          name: 'seeder',
-          message: 'Select a seeder to apply:',
-          choices: seeders,
-        },
-      ]);
-      await runSequelizeCommand(`db:seed --name ${seeder}`, servicePath);
-      break;
-    }
-
-    case 'Undo All Seeders':
-      await runSequelizeCommand('db:seed:undo:all', servicePath);
+    case UNDO_ALL_SEED:
+      await runSequelizeCommand('db:seed:undo:all', servicePath, environment);
       break;
 
-    case 'Undo a Specific Seeder': {
-      const seeders = getFilesInFolder(seederDir, '.ts');
-      if (seeders.length === 0) {
-        console.log('No seeders found.');
-        return;
-      }
-      const { seeder } = await inquirer.prompt([
-        {
-          type: 'list',
-          name: 'seeder',
-          message: 'Select a seeder to undo:',
-          choices: seeders,
-        },
-      ]);
-      await runSequelizeCommand(`db:seed:undo --name ${seeder}`, servicePath);
+    case UNDO_LATEST_SEED: {
+      await runSequelizeCommand('db:seed:undo', servicePath, environment);
       break;
     }
   }

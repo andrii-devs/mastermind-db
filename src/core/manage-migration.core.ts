@@ -1,21 +1,18 @@
 import inquirer from 'inquirer';
 import { getServiceFolders } from '../utils/file-path.utils';
 import { getRootDir } from '../helper/sequelize-blueprint-config.helper';
-import {
-  getFilesInFolder,
-  runSequelizeCommand,
-} from '../helper/run-sequelize-command.helper';
+import { runSequelizeCommand } from '../helper/run-sequelize-command.helper';
+import { logger } from '../utils/logger.utils';
+import path from 'path';
 
 const APPLY_ALL_MIGRATION = 'Apply all migrations';
-const APPLY_LATEST_MIGRATION = 'Apply the latest migration';
 const UNDO_ALL_MIGRATION = 'Undo all migrations';
 const UNDO_LATEST_MIGRATION = 'Undo the latest migration';
-
 export async function manageMigrationsAction() {
   const services = getServiceFolders();
   const baseDir = getRootDir();
   if (services.length === 0) {
-    console.log(
+    logger.error(
       `No services found in ${baseDir}. Please create a database first.`,
     );
     return;
@@ -30,43 +27,30 @@ export async function manageMigrationsAction() {
     },
   ]);
 
+  const { environment } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'environment',
+      message: 'Select the environment:',
+      choices: ['development', 'production', 'test'],
+      default: 'development',
+    },
+  ]);
+
   const { operation } = await inquirer.prompt([
     {
       type: 'list',
       name: 'operation',
       message: `What would you like to do with migrations for "${serviceName}"?`,
-      choices: [
-        APPLY_ALL_MIGRATION,
-        APPLY_LATEST_MIGRATION,
-        UNDO_ALL_MIGRATION,
-        UNDO_LATEST_MIGRATION,
-      ],
+      choices: [APPLY_ALL_MIGRATION, UNDO_ALL_MIGRATION, UNDO_LATEST_MIGRATION],
     },
   ]);
 
-  const servicePath = `${baseDir}/${serviceName}`;
-  const migrationDir = `${servicePath}/migrations`;
+  const servicePath = path.join(baseDir, serviceName);
 
   switch (operation) {
     case APPLY_ALL_MIGRATION:
-      await runSequelizeCommand('db:migrate', servicePath);
-      break;
-
-    case APPLY_LATEST_MIGRATION:
-      const migrations = getFilesInFolder(migrationDir, '.ts');
-      if (migrations.length === 0) {
-        console.log('No migrations found.');
-        return;
-      }
-      const { migration } = await inquirer.prompt([
-        {
-          type: 'list',
-          name: 'migration',
-          message: 'Select a migration to apply:',
-          choices: migrations,
-        },
-      ]);
-      await runSequelizeCommand(`db:migrate --name ${migration}`, servicePath);
+      await runSequelizeCommand('db:migrate', servicePath, environment);
       break;
 
     case UNDO_ALL_MIGRATION:
@@ -79,29 +63,21 @@ export async function manageMigrationsAction() {
       ]);
 
       if (confirmUndo) {
-        await runSequelizeCommand('db:migrate:undo:all', servicePath);
+        await runSequelizeCommand(
+          'db:migrate:undo:all',
+          servicePath,
+          environment,
+        );
       }
 
       break;
 
     case UNDO_LATEST_MIGRATION:
-      const migrationsFiles = getFilesInFolder(migrationDir, '.ts');
-      if (migrationsFiles.length === 0) {
-        console.log('No migrations found.');
-        return;
-      }
-      const { migrationsLatest } = await inquirer.prompt([
-        {
-          type: 'list',
-          name: 'migrationsLatest',
-          message: 'Select a migration to undo:',
-          choices: migrationsFiles,
-        },
-      ]);
-      await runSequelizeCommand(
-        `db:migrate:undo --name ${migrationsLatest}`,
-        servicePath,
-      );
+      await runSequelizeCommand('db:migrate:undo', servicePath, environment);
       break;
   }
+}
+
+function sanitazeMigration(migration: string): string {
+  return migration.replace('.ts', '');
 }
