@@ -4,6 +4,7 @@ import { allocatePort } from '../helper/allocate-port.helper';
 import { scaffoldDatabase } from '../service/scaffold-database.service';
 import { scaffoldDockerCompose } from '../service/scaffold-docker-compose.service';
 import { scaffoldSequelizeFiles } from '../service/scaffold-sequelize-files.service';
+import { logger } from '../utils/logger.utils';
 
 export async function createDatabaseAction() {
   const { dbType, serviceName } = await inquirer.prompt([
@@ -22,7 +23,7 @@ export async function createDatabaseAction() {
     },
   ]);
 
-  console.log(
+  logger.info(
     `Initializing a ${dbType} database for the "${serviceName}" service...`,
   );
 
@@ -38,5 +39,5 @@ export async function createDatabaseAction() {
   await scaffoldSequelizeFiles(serviceName, []);
   await scaffoldDockerCompose(serviceName, databaseMap[dbType], port);
 
-  console.log(`Setup for "${serviceName}" complete!`);
+  logger.success(`Setup for "${serviceName}" complete!`);
 }

@@ -2,12 +2,13 @@ import inquirer from 'inquirer';
 import { getRootDir } from '../helper/sequelize-blueprint-config.helper';
 import { getServiceFolders } from '../utils/file-path.utils';
 import { scaffoldSequelizeFiles } from '../service/scaffold-sequelize-files.service';
+import { logger } from '../utils/logger.utils';
 
 export async function generateSequelizeAction() {
   const folders = getServiceFolders();
   const baseDir = getRootDir();
   if (folders.length === 0) {
-    console.log(
+    logger.error(
       `No existing services found in ${baseDir}. Please create a database first.`,
     );
     return;
