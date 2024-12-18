@@ -1,24 +1,22 @@
 import dotenv from 'dotenv';
 import inquirer from 'inquirer';
 import { createDatabaseAction } from '../core/create-database.core';
-import { manageMigrationsAction } from '../core/manage-migration.core';
-import { generateSequelizeAction } from '../core/generate-sequelize.core';
-import { manageSeedersAction } from '../core/manage-seeders.core';
 import kleur from 'kleur';
 import { printLogo } from '../utils/print-logo.utils';
 import { logger } from '../utils/logger.utils';
+import { configureCLI } from '../core/configure.core';
+import {
+  CONFIGURE_SETTINGS,
+  CREATE_SERVICE,
+  EXIT_CLI,
+  MANAGE_EXISTING_SERVICE,
+} from '../utils/const.utils';
+import { manageExistingService } from '../core/existing-service.core';
 
 dotenv.config();
 
-const CREATE_DATABASE = 'Create a new database';
-const GENERATE_FILES = 'Generate sequelize files (migrations/models/seeders):';
-const MANAGE_MIGRATIONS = 'Manage migrations';
-const MANAGE_SEEDERS = 'Manage seeders';
-const EXIT_CLI = kleur.red('Exit CLI');
-
 export async function runCLI(version: string) {
   let exitCLI = false;
-
   while (!exitCLI) {
     printLogo(version);
 
@@ -28,10 +26,9 @@ export async function runCLI(version: string) {
         name: 'action',
         message: 'What would you like to do?',
         choices: [
-          CREATE_DATABASE,
-          GENERATE_FILES,
-          MANAGE_MIGRATIONS,
-          MANAGE_SEEDERS,
+          CREATE_SERVICE,
+          MANAGE_EXISTING_SERVICE,
+          CONFIGURE_SETTINGS,
           EXIT_CLI,
         ],
         loop: false,
@@ -39,28 +36,21 @@ export async function runCLI(version: string) {
     ]);
 
     switch (action) {
-      case CREATE_DATABASE:
+      case CREATE_SERVICE:
         await createDatabaseAction();
         await askForReturnOrExit();
         break;
 
-      case GENERATE_FILES:
-        await generateSequelizeAction();
-        await askForReturnOrExit();
+      case MANAGE_EXISTING_SERVICE:
+        await manageExistingService();
         break;
 
-      case MANAGE_MIGRATIONS:
-        await manageMigrationsAction();
-        await askForReturnOrExit();
-        break;
-
-      case MANAGE_SEEDERS:
-        await manageSeedersAction();
-        await askForReturnOrExit();
+      case CONFIGURE_SETTINGS:
+        await configureCLI();
         break;
 
       case EXIT_CLI:
-        logger.success('\nThank you for using Sequelize Blueprint CLI!');
+        logger.success(kleur.bold('\nThank you for using Master Mind DB 🛠️'));
         exitCLI = true;
         break;
 
@@ -79,14 +69,13 @@ async function askForReturnOrExit() {
       message: 'What would you like to do next?',
       choices: [
         { name: 'Go back to the main menu', value: 'menu' },
-        { name: 'Exit CLI', value: 'exit' },
+        { name: 'Exit', value: 'exit' },
       ],
     },
   ]);
 
   if (choice === 'exit') {
-    logger.success('\nExiting Sequelize Blueprint CLI. Goodbye!');
+    logger.success(kleur.bold('\nExiting Master Mind DB. Goodbye 🛠️'));
     process.exit(0);
   }
 }
-
