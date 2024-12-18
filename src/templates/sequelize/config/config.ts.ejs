@@ -17,7 +17,7 @@ interface ISequelizeConfig {
 
 const config: ISequelizeConfig = {
   development: {
-    dialect: "<%= dbType %>",
+    dialect: process.env.DB_DIALECT as Dialect,
     host: process.env.DB_HOST!,
     username: process.env.DB_USERNAME!,
     password: process.env.DB_PASSWORD!,
@@ -25,7 +25,7 @@ const config: ISequelizeConfig = {
     port: Number(process.env.DB_PORT),
   },
   test: {
-    dialect: "<%= dbType %>",
+    dialect: process.env.DB_DIALECT as Dialect,
     host: process.env.DB_HOST!,
     username: process.env.DB_USERNAME!,
     password: process.env.DB_PASSWORD!,
@@ -33,7 +33,7 @@ const config: ISequelizeConfig = {
     port: Number(process.env.DB_PORT),
   },
   production: {
-    dialect: "<%= dbType %>",
+    dialect: process.env.DB_DIALECT as Dialect,
     host: process.env.DB_HOST!,
     username: process.env.DB_USERNAME!,
     password: process.env.DB_PASSWORD!,
@@ -42,4 +42,5 @@ const config: ISequelizeConfig = {
   },
 };
 
+//@ts-ignore
 export = config;
