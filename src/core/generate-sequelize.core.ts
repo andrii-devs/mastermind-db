@@ -1,8 +1,8 @@
 import inquirer from 'inquirer';
 import { getRootDir } from '../helper/sequelize-blueprint-config.helper';
 import { getServiceFolders } from '../utils/file-path.utils';
-import { scaffoldSequelizeFiles } from '../service/scaffold-sequelize-files.service';
 import { logger } from '../utils/logger.utils';
+import { generateSequelizeFiles } from '../helper/generate-sequelize-files.helper';
 
 export async function generateSequelizeAction() {
   const folders = getServiceFolders();
@@ -29,5 +29,5 @@ export async function generateSequelizeAction() {
     },
   ]);
 
-  await scaffoldSequelizeFiles(serviceName, fileTypes);
+  await generateSequelizeFiles(serviceName, fileTypes);
 }
