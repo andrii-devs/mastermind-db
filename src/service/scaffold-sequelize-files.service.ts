@@ -1,17 +1,15 @@
-import inquirer from 'inquirer';
-import {
-  getConfig,
-  getRootDir,
-} from '../helper/sequelize-blueprint-config.helper';
-import { getTimestamp } from '../utils/file-path.utils';
+import { getRootDir } from '../helper/sequelize-blueprint-config.helper';
 import path from 'path';
 import { renderTemplate } from '../helper/render-templates.helper';
 import fs from 'fs-extra';
-export async function scaffoldSequelizeFiles(
-  serviceName: string,
-  fileTypes: string[],
-) {
-  const config = getConfig();
+import { createSpinner } from 'nanospinner';
+import kleur from 'kleur';
+export async function scaffoldSequelizeTemplate(serviceName: string) {
+  const spinner = createSpinner(
+    kleur.cyan(`Scaffolding sequelize template for service: ${serviceName}\n`),
+  ).start();
+  await new Promise((resolve) => setTimeout(resolve, 1500));
+
   const rootDir = getRootDir();
   const baseDir = path.join(rootDir, serviceName, 'sequelize');
   const subfolders = ['migrations', 'models', 'seeders'];
@@ -21,115 +19,25 @@ export async function scaffoldSequelizeFiles(
     subfolders.map((folder) => fs.ensureDir(path.join(baseDir, folder))),
   );
 
+  await renderTemplate(
+    `sequelize/config/config.ts.ejs`,
+    `${baseDir}/config.ts`,
+    {},
+    spinner,
+  );
+
   const sequelizercfilePath = path.join(
     rootDir,
     serviceName,
     '/sequelize/',
     '.sequelizerc',
   );
-  await renderTemplate('/sequelize/sequelizerc.ejs', sequelizercfilePath, {});
+  await renderTemplate(
+    '/sequelize/sequelizerc.ejs',
+    sequelizercfilePath,
+    {},
+    spinner,
+  );
 
-  if (fileTypes.length > 0) {
-    for (const type of fileTypes) {
-      switch (type) {
-        case 'Migrations':
-          const { migrationName } = await inquirer.prompt([
-            {
-              type: 'input',
-              name: 'migrationName',
-              message: 'Enter migration name (kebab-case):',
-              validate: (input) =>
-                input.trim() !== '' ? true : 'Migration name cannot be empty',
-            },
-          ]);
-          const timestamp = getTimestamp();
-          const fileName = `${timestamp}-${migrationName.toLocaleLowerCase()}.ts`;
-          const migrationPath = path.join(
-            rootDir,
-            serviceName,
-            config.migrationsDir,
-            fileName,
-          );
-
-          await renderTemplate(
-            'sequelize/migrations/migration.ejs',
-            migrationPath,
-            {
-              migrationName,
-            },
-          );
-
-          break;
-        case 'Seeders':
-          const { seederName } = await inquirer.prompt([
-            {
-              type: 'input',
-              name: 'seederName',
-              message: 'Enter seed name:',
-              validate: (input) =>
-                input.trim() !== '' ? true : 'Seed name cannot be empty',
-            },
-          ]);
-
-          const { seedTableName } = await inquirer.prompt([
-            {
-              type: 'input',
-              name: 'seedTableName',
-              message: 'Enter table name:',
-              default: seederName,
-            },
-          ]);
-
-          const seedFileName = `${seederName}.seed.ts`;
-          const seederPath = path.join(
-            rootDir,
-            serviceName,
-            config.seedersDir,
-            seedFileName,
-          );
-
-          await renderTemplate('sequelize/seeders/seed.ejs', seederPath, {
-            seederName,
-            tableName: seedTableName,
-          });
-
-          break;
-        case 'Models':
-          const { modelName } = await inquirer.prompt([
-            {
-              type: 'input',
-              name: 'modelName',
-              message: 'Enter model name:',
-              validate: (input) =>
-                input.trim() !== '' ? true : 'Model name cannot be empty',
-            },
-          ]);
-
-          const { tableName } = await inquirer.prompt([
-            {
-              type: 'input',
-              name: 'tableName',
-              message: 'Enter table name:',
-              default: modelName,
-            },
-          ]);
-          const modelFileName = `${modelName}.model.ts`;
-          const filePath = path.join(
-            rootDir,
-            serviceName,
-            config.modelsDir,
-            modelFileName,
-          );
-
-          await renderTemplate('/sequelize/models/model.ejs', filePath, {
-            modelName,
-            tableName,
-          });
-
-          break;
-        default:
-          break;
-      }
-    }
-  }
+  spinner.success(kleur.green(`Successfully scaffolded sequelize template`));
 }

@@ -1,9 +1,10 @@
 import fs from 'fs-extra';
 import inquirer from 'inquirer';
 import {
-  generateDockerCompose,
-  updateDockerCompose,
+  createDockerComposeFile,
+  buildDockerCompose,
 } from '../helper/docker-compose.helper';
+import { logger } from '../utils/logger.utils';
 
 export async function scaffoldDockerCompose(
   serviceName: string,
@@ -11,19 +12,22 @@ export async function scaffoldDockerCompose(
   port: number,
 ) {
   if (!fs.existsSync('./docker-compose.yml')) {
-    const { confimCreatingDockerCompose } = await inquirer.prompt([
+    const { confirmCreatingDockerCompose } = await inquirer.prompt([
       {
         type: 'confirm',
-        name: 'confimCreatingDockerCompose',
+        name: 'confirmCreatingDockerCompose',
         message:
           'No docker-compose.yml file found. Would you like to create one?',
       },
     ]);
 
-    if (confimCreatingDockerCompose) {
-      await generateDockerCompose();
-      await updateDockerCompose(serviceName, dbType, port);
+    if (!confirmCreatingDockerCompose) {
+      logger.info('Skipped creating docker-compose.yml');
+      return;
     }
+
+    await createDockerComposeFile();
+    await buildDockerCompose(serviceName, dbType, port);
   } else {
     const { useCompose } = await inquirer.prompt([
       {
@@ -35,7 +39,7 @@ export async function scaffoldDockerCompose(
     ]);
 
     if (useCompose) {
-      await updateDockerCompose(serviceName, dbType, port);
+      await buildDockerCompose(serviceName, dbType, port);
     }
   }
 }
