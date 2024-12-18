@@ -6,10 +6,7 @@ import { Command } from 'commander';
 import { printLogo } from './utils/print-logo.utils';
 import { runCLI } from './cmd/cli';
 import { initCLI } from './cmd/init';
-import {
-  checkIfConfigFileExists,
-  getConfigPath,
-} from './helper/sequelize-blueprint-config.helper';
+import { initConfigIfNotExists } from './service/check-configration-file.service';
 
 const packageJson = JSON.parse(
   fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'),
@@ -18,28 +15,23 @@ const version = packageJson.version;
 const program = new Command();
 
 program
-  .name('sequelize-blueprint')
-  .description('A CLI to manage Sequelize-based projects with ease.')
-  .version(version, '-v, --version', 'Output the CLI version');
+  .name('mastermind-db')
+  .description('A CLI to manage databases and ORM-based projects with ease.')
+  .version(version, '-v, --version', 'Output the Master Mind DB version');
 
-// Define `init` command
 program
   .command('init')
-  .description('Initialize the CLI with default configuration.')
+  .description('Initialize Master Mind DB with default configuration.')
   .action(async () => {
     printLogo(version);
     initCLI();
   });
 
-// Define `wizard` command
 program
   .command('start')
-  .description('Run the interactive setup wizard.')
+  .description('Run the interactive Master Mind DB.')
   .action(async () => {
-    if (!checkIfConfigFileExists(getConfigPath())) {
-      process.exit(1);
-    }
-
+    await initConfigIfNotExists(version);
     await runCLI(version);
   });
 
