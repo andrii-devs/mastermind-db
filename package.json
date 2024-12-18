@@ -1,9 +1,9 @@
 {
-  "name": "sequelize-blueprint",
+  "name": "mastermind-db",
   "version": "0.0.1",
-  "description": "",
+  "description": "A CLI to manage database structures and ORM integrations with precision.",
   "bin": {
-    "sequelize-blueprint": "dist/index.js"
+    "mastermind-db": "dist/index.js"
   },
   "main": "dist/index.js",
   "scripts": {
@@ -16,8 +16,9 @@
   },
   "keywords": [
     "cli",
-    "sequelize",
-    "blueprint"
+    "database",
+    "orm",
+    "mastermind-db"
   ],
   "files": [
     "dist",
