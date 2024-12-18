@@ -24,6 +24,8 @@ export async function initConfigIfNotExists(version: string) {
     config.rootDir = rootDir;
     saveProjectConfig(config);
   } else {
-    logger.info('Loaded configuration file');
+    logger.info(
+      `Loaded configuration file. Using root directory "${config.rootDir}"`,
+    );
   }
 }
