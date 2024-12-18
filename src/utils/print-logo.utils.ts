@@ -1,13 +1,14 @@
 import kleur from 'kleur';
 import figlet from 'figlet';
+import { logger } from './logger.utils';
 export async function printLogo(version: string) {
   console.log(
     kleur.cyan(
-      figlet.textSync('Sequelize Blueprint CLI', {
+      figlet.textSync('Master Mind DB', {
         horizontalLayout: 'default',
         verticalLayout: 'default',
       }),
     ),
   );
-  console.log(kleur.green(`Version: ${version || '1.0.0'}`));
+  logger.success(kleur.bold(`Version: ${version || '1.0.0'}`));
 }
