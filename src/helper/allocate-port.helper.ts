@@ -14,6 +14,6 @@ export async function allocatePort(dbType: string): Promise<number> {
     port++;
   }
 
-  logger.info(`Allocated port: ${port}`);
+  logger.info(`Allocated port: ${port} for db ${dbType}`);
   return port;
 }
