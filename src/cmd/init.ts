@@ -1,25 +1,19 @@
-import fs from 'fs-extra';
-import { getConfigPath } from '../helper/sequelize-blueprint-config.helper';
 import { logger } from '../utils/logger.utils';
+import {
+  DEFAULT_ROOT_DIR,
+  loadProjectConfig,
+  saveProjectConfig,
+} from '../helper/mastermind-config.helper';
 export function initCLI(): void {
-  const configPath = getConfigPath();
-
-  if (!fs.existsSync(configPath)) {
-    const defaultConfig = {
-      rootDir: './src',
-      migrationsDir: '/sequelize/migrations',
-      modelsDir: '/sequelize/models',
-      seedersDir: '/sequelize/seeders',
-    };
-
-    fs.writeFileSync(
-      configPath,
-      JSON.stringify(defaultConfig, null, 2),
-      'utf-8',
+  const projectConfig = loadProjectConfig();
+  let { rooDir } = loadProjectConfig();
+  if (rooDir) {
+    logger.warn(
+      `Configuration file already exists ${rooDir}. To change it choose configuration into CLI menu!`,
     );
-
-    logger.info('Initialized sequelize-blueprint with default configuration.');
   } else {
-    logger.warn(`Configuration file already exists ${configPath}`);
+    projectConfig.rootDir = DEFAULT_ROOT_DIR;
+    saveProjectConfig(projectConfig);
+    logger.info('Initialized .mastermindrc with default configuration.');
   }
 }
