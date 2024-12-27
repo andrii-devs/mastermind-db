@@ -5,6 +5,12 @@ import path from 'path';
 import { logger } from '../utils/logger.utils';
 import { createSpinner } from 'nanospinner';
 import kleur from 'kleur';
+import {
+  isContainerRunning,
+  isDockerRunning,
+  startDockerContainer,
+} from '../service/manage-docker.service';
+import inquirer from 'inquirer';
 
 function sanitizeName(name: string): string {
   return name.trim().replace(/\s+/g, '-');
@@ -100,11 +106,11 @@ export async function buildDockerCompose(
       spinner.start();
     }
 
-    // Write the updated docker-compose.yml
     const updatedContent = yaml.dump(dockerCompose, { lineWidth: -1 });
     await fs.writeFile(dockerComposeFile, updatedContent, 'utf8');
-    // logger.success(`Successfully updated docker-compose.yml`);
     spinner.success(kleur.green(`Successfully updated docker-compose.yml`));
+
+    await aksForStartDockerCompose(serviceKey);
   } catch (err) {
     spinner.error(kleur.red(`Failed to update docker-compose.yml: ${err}`));
   }
@@ -123,5 +129,27 @@ export async function createDockerComposeFile() {
       volumes: {},
     });
     fs.writeFileSync('./docker-compose.yml', dockerCompose, 'utf8');
+  }
+}
+
+export async function aksForStartDockerCompose(serviceKey: string) {
+  if (await isDockerRunning()) {
+    const isRunning = await isContainerRunning(serviceKey);
+    if (!isRunning) {
+      const { startContainer } = await inquirer.prompt([
+        {
+          type: 'confirm',
+          name: 'startContainer',
+          message: 'Docker container is not running. Do you want to start it?',
+          default: true,
+        },
+      ]);
+
+      if (startContainer) {
+        await startDockerContainer(serviceKey);
+      } else {
+        logger.info(`Skipped starting docker container ${serviceKey}`);
+      }
+    }
   }
 }
