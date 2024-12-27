@@ -17,7 +17,7 @@ export function loadProjectConfig(): Record<string, any> {
   }
 
   return {
-    databases: {},
+    services: {},
   };
 }
 
@@ -27,29 +27,51 @@ export function saveProjectConfig(config: Record<string, any>): void {
 }
 
 export function addOrUpdateProjectConfig(
-  dbName: string,
+  serviceName: string,
   orm: string,
   rootDir: string = DEFAULT_ROOT_DIR,
 ): void {
   const projectConfig = loadProjectConfig();
 
   projectConfig.rootDir = rootDir;
-  projectConfig.databases[dbName] = {
+  // const databases = (projectConfig.databases[dbName] = {
+  //   orm,
+  //   migrationsDir: path.join(rootDir, dbName, orm.toLowerCase(), '/migrations'),
+  //   modelsDir: path.join(rootDir, dbName, orm.toLowerCase(), '/models'),
+  //   seedersDir: path.join(rootDir, dbName, orm.toLowerCase(), '/seeders'),
+  //   templatesDir: path.resolve(__dirname, '../templates', orm.toLowerCase()),
+  // });
+
+  projectConfig.services[serviceName] = {
     orm,
-    migrationsDir: path.join(rootDir, dbName, orm.toLowerCase(), '/migrations'),
-    modelsDir: path.join(rootDir, dbName, orm.toLowerCase(), '/models'),
-    seedersDir: path.join(rootDir, dbName, orm.toLowerCase(), '/seeders'),
-    templatesDir: path.resolve(__dirname, '../templates', orm.toLowerCase()),
+    migrationsDir: path.join(
+      rootDir,
+      serviceName,
+      orm.toLowerCase(),
+      '/migrations',
+    ),
+    modelsDir: path.join(rootDir, serviceName, orm.toLowerCase(), '/models'),
+    seedersDir: path.join(rootDir, serviceName, orm.toLowerCase(), '/seeders'),
   };
 
   saveProjectConfig(projectConfig);
 }
 
-export function getConfigPaths(dbName: string) {
+export function getConfigPaths(serviceName: string) {
+  // const projectConfig = loadProjectConfig();
+  // if (!projectConfig.databases[dbName]) {
+  //   logger.error(`Configuration for database ${dbName} not found`);
+  // }
+
+  // return { rootDir: projectConfig.rootDir, ...projectConfig.databases[dbName] };
+
   const projectConfig = loadProjectConfig();
-  if (!projectConfig.databases[dbName]) {
-    logger.error(`Configuration for database ${dbName} not found`);
+  if (!projectConfig.services[serviceName]) {
+    logger.error(`Configuration for service ${serviceName} not found`);
   }
 
-  return { rootDir: projectConfig.rootDir, ...projectConfig.databases[dbName] };
+  return {
+    rootDir: projectConfig.rootDir,
+    ...projectConfig.services[serviceName],
+  };
 }
