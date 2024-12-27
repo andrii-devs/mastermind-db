@@ -8,10 +8,12 @@ import { configureCLI } from '../core/configure.core';
 import {
   CONFIGURE_SETTINGS,
   CREATE_SERVICE,
+  DELETE_SERVICE,
   EXIT_CLI,
   MANAGE_EXISTING_SERVICE,
 } from '../utils/const.utils';
 import { manageExistingService } from '../core/existing-service.core';
+import { deleteServiceAction } from '../core/delete-service.core';
 
 dotenv.config();
 
@@ -29,6 +31,7 @@ export async function runCLI(version: string) {
           CREATE_SERVICE,
           MANAGE_EXISTING_SERVICE,
           CONFIGURE_SETTINGS,
+          DELETE_SERVICE,
           EXIT_CLI,
         ],
         loop: false,
@@ -47,6 +50,10 @@ export async function runCLI(version: string) {
 
       case CONFIGURE_SETTINGS:
         await configureCLI();
+        break;
+
+      case DELETE_SERVICE:
+        await deleteServiceAction();
         break;
 
       case EXIT_CLI:
