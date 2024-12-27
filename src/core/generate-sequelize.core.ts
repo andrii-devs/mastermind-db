@@ -4,7 +4,7 @@ import { getServiceFolders } from '../utils/file-path.utils';
 import { logger } from '../utils/logger.utils';
 import { generateSequelizeFiles } from '../helper/generate-sequelize-files.helper';
 
-export async function generateSequelizeAction() {
+export async function generateSequelizeAction(serviceName: string) {
   const folders = getServiceFolders();
   const baseDir = getRootDir();
   if (folders.length === 0) {
@@ -14,13 +14,7 @@ export async function generateSequelizeAction() {
     return;
   }
 
-  const { serviceName, fileTypes } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'serviceName',
-      message: 'Select the service for which you want to generate files:',
-      choices: folders,
-    },
+  const { fileTypes } = await inquirer.prompt([
     {
       type: 'checkbox',
       name: 'fileTypes',

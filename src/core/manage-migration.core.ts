@@ -8,7 +8,7 @@ import path from 'path';
 const APPLY_ALL_MIGRATION = 'Apply all migrations';
 const UNDO_ALL_MIGRATION = 'Undo all migrations';
 const UNDO_LATEST_MIGRATION = 'Undo the latest migration';
-export async function manageMigrationsAction() {
+export async function manageMigrationsAction(serviceName: string) {
   const services = getServiceFolders();
   const baseDir = getRootDir();
   if (services.length === 0) {
@@ -17,15 +17,6 @@ export async function manageMigrationsAction() {
     );
     return;
   }
-
-  const { serviceName } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'serviceName',
-      message: 'Select service to manage migrations:',
-      choices: services,
-    },
-  ]);
 
   const { environment } = await inquirer.prompt([
     {

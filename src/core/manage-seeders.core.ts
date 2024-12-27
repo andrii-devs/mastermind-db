@@ -9,7 +9,7 @@ const APPLY_ALL_SEED = 'Apply all seeders';
 const UNDO_ALL_SEED = 'Undo all seeders';
 const UNDO_LATEST_SEED = 'Undo the latest seed';
 
-export async function manageSeedersAction(): Promise<void> {
+export async function manageSeedersAction(serviceName: string): Promise<void> {
   const services = getServiceFolders();
   const baseDir = getRootDir();
 
@@ -17,15 +17,6 @@ export async function manageSeedersAction(): Promise<void> {
     logger.error('No services found. Please create a database first.');
     return;
   }
-
-  const { serviceName } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'serviceName',
-      message: 'Select a service to manage seeders:',
-      choices: services,
-    },
-  ]);
 
   const { environment } = await inquirer.prompt([
     {
