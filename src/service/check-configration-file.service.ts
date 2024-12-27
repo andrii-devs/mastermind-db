@@ -8,9 +8,9 @@ import { printLogo } from '../utils/print-logo.utils';
 
 export async function initConfigIfNotExists(version: string) {
   const config = loadProjectConfig();
-  printLogo(version);
 
   if (!config.rootDir) {
+    printLogo(version);
     logger.warn('Configuration file not found!');
     const { rootDir } = await inquirer.prompt([
       {
