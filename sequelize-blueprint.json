@@ -1,6 +1,0 @@
-{
-  "rootDir": "./build",
-  "migrationsDir": "/sequelize/migrations",
-  "modelsDir": "/sequelize/models",
-  "seedersDir": "/sequelize/seeders"
-}
