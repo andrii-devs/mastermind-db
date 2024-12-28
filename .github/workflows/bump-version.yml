@@ -1,0 +1,26 @@
+name: Version Bump
+
+on:
+  pull_request:
+    branches:
+      - development
+    types:
+      - opened
+
+jobs:
+  version-bump:
+    name: Version bump before publishing extension
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Automated Version Bump
+        id: version
+        uses: 'phips28/gh-action-bump-version@master'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          commit-message: '🔼 bump(v): version to {{version}}'
+          skip-tag: 'true'
