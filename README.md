@@ -1,6 +1,10 @@
-# Mastermind-DB CLI
+  <div align="center">
+    <img src="./assets/mastermind-db-logo.png"alt="mastermind-db icon" width="300wh" height="300vh"/> 
+  </div>
 
-**Mastermind-DB** is a versatile and extensible CLI tool designed for managing databases and ORM-based projects. It supports multiple ORMs, including Sequelize, and integrates seamlessly with Docker for containerized database management.
+# MasterMind-DB CLI
+
+**MasterMind-DB** is a versatile and extensible CLI tool designed for managing databases and ORM-based projects. It supports multiple ORMs, including Sequelize, and integrates seamlessly with Docker for containerized database management.
 
 ---
 
