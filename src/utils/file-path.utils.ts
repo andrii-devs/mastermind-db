@@ -1,9 +1,10 @@
 import path from 'path';
 import fs from 'fs-extra';
-import { getRootDir } from '../helper/sequelize-blueprint-config.helper';
+import { loadProjectConfig } from '../helper/mastermind-config.helper';
 
 export const getServiceFolders = (): string[] => {
-  const rootFolder = getRootDir();
+  const projectConfig = loadProjectConfig();
+  const rootFolder = projectConfig.rootDir;
   return fs.existsSync(rootFolder)
     ? fs
         .readdirSync(rootFolder)

@@ -4,9 +4,9 @@ import fs from 'fs-extra';
 import { handlerSequelizeMessage, logger } from '../utils/logger.utils';
 import path from 'path';
 import os from 'os';
-import { getRelativePath } from './sequelize-blueprint-config.helper';
 import { handlerError } from '../utils/error-handler.utils';
 import { createSpinner } from 'nanospinner';
+import { getRelativePath } from './mastermind-config.helper';
 
 export const execAsync = promisify(exec);
 
