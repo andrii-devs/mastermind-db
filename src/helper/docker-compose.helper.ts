@@ -1,6 +1,5 @@
 import fs from 'fs-extra';
 import yaml from 'js-yaml';
-import { getConfigPath, getRootDir } from './sequelize-blueprint-config.helper';
 import path from 'path';
 import { logger } from '../utils/logger.utils';
 import { createSpinner } from 'nanospinner';
