@@ -1,0 +1,6 @@
+FROM postgres:latest
+
+ENV POSTGRES_USER=<%= dbUsername %>
+ENV POSTGRES_PASSWORD=<%= dbPassword %>
+ENV POSTGRES_DB=<%= dbName %>
+EXPOSE <%= port %>

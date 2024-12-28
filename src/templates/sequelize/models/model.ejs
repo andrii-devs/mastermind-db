@@ -1,0 +1,23 @@
+import { Model, Table, Column, DataType, CreatedAt, UpdatedAt } from 'sequelize-typescript';
+
+@Table({ tableName: '<%= tableName %>', timestamps: true })
+export class <%= modelName %> extends Model {
+
+ /*
+ An example of model
+ @UpdatedAt 
+ @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
+  expiresAt: Date;
+
+ @CreatedAt
+ @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
+  expiresAt: Date;
+
+  */
+}
