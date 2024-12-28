@@ -9,11 +9,23 @@ export function getConfigFilePath(): string {
   return path.resolve(process.cwd(), CONFIG_FILE_NAME);
 }
 
+interface IProjectConfig {
+  rootDir: string;
+  services: {
+    [serviceName: string]: {
+      orm: string;
+      migrationsDir: string;
+      modelsDir: string;
+      seedersDir: string;
+    };
+  };
+}
+
 export function loadProjectConfig(): Record<string, any> {
   const configPath = getConfigFilePath();
 
   if (fs.existsSync(configPath)) {
-    return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    return JSON.parse(fs.readFileSync(configPath, 'utf8')) as IProjectConfig;
   }
 
   return {
@@ -34,14 +46,6 @@ export function addOrUpdateProjectConfig(
   const projectConfig = loadProjectConfig();
 
   projectConfig.rootDir = rootDir;
-  // const databases = (projectConfig.databases[dbName] = {
-  //   orm,
-  //   migrationsDir: path.join(rootDir, dbName, orm.toLowerCase(), '/migrations'),
-  //   modelsDir: path.join(rootDir, dbName, orm.toLowerCase(), '/models'),
-  //   seedersDir: path.join(rootDir, dbName, orm.toLowerCase(), '/seeders'),
-  //   templatesDir: path.resolve(__dirname, '../templates', orm.toLowerCase()),
-  // });
-
   projectConfig.services[serviceName] = {
     orm,
     migrationsDir: path.join(
@@ -57,14 +61,15 @@ export function addOrUpdateProjectConfig(
   saveProjectConfig(projectConfig);
 }
 
-export function getConfigPaths(serviceName: string) {
-  // const projectConfig = loadProjectConfig();
-  // if (!projectConfig.databases[dbName]) {
-  //   logger.error(`Configuration for database ${dbName} not found`);
-  // }
+interface IConfigPath {
+  rootDir: string;
+  orm: string;
+  migrationsDir: string;
+  modelsDir: string;
+  seedersDir: string;
+}
 
-  // return { rootDir: projectConfig.rootDir, ...projectConfig.databases[dbName] };
-
+export function getConfigPaths(serviceName: string): IConfigPath {
   const projectConfig = loadProjectConfig();
   if (!projectConfig.services[serviceName]) {
     logger.error(`Configuration for service ${serviceName} not found`);
@@ -74,4 +79,8 @@ export function getConfigPaths(serviceName: string) {
     rootDir: projectConfig.rootDir,
     ...projectConfig.services[serviceName],
   };
+}
+
+export function getRelativePath(base: string, target: string): string {
+  return path.relative(base, target);
 }

@@ -1,15 +1,14 @@
 import inquirer from 'inquirer';
 import { getTimestamp } from '../utils/file-path.utils';
 import path from 'path';
-import { getConfig, getRootDir } from './sequelize-blueprint-config.helper';
 import { renderTemplate } from './render-templates.helper';
+import { getConfigPaths } from './mastermind-config.helper';
 
 export async function generateSequelizeFiles(
   serviceName: string,
   fileTypes: string[],
 ) {
-  const config = getConfig();
-  const rootDir = getRootDir();
+  const configPaths = getConfigPaths(serviceName);
 
   for (const type of fileTypes) {
     switch (type) {
@@ -25,12 +24,7 @@ export async function generateSequelizeFiles(
         ]);
         const timestamp = getTimestamp();
         const fileName = `${timestamp}-${migrationName.toLocaleLowerCase()}.ts`;
-        const migrationPath = path.join(
-          rootDir,
-          serviceName,
-          config.migrationsDir,
-          fileName,
-        );
+        const migrationPath = path.join(configPaths.migrationsDir, fileName);
 
         await renderTemplate(
           'sequelize/migrations/migration.ejs',
@@ -62,12 +56,7 @@ export async function generateSequelizeFiles(
         ]);
 
         const seedFileName = `${seederName}.seed.ts`;
-        const seederPath = path.join(
-          rootDir,
-          serviceName,
-          config.seedersDir,
-          seedFileName,
-        );
+        const seederPath = path.join(configPaths.seedersDir, seedFileName);
 
         await renderTemplate('sequelize/seeders/seed.ejs', seederPath, {
           seederName,
@@ -95,12 +84,7 @@ export async function generateSequelizeFiles(
           },
         ]);
         const modelFileName = `${modelName}.model.ts`;
-        const filePath = path.join(
-          rootDir,
-          serviceName,
-          config.modelsDir,
-          modelFileName,
-        );
+        const filePath = path.join(configPaths.modelsDir, modelFileName);
 
         await renderTemplate('/sequelize/models/model.ejs', filePath, {
           modelName,

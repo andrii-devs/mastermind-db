@@ -1,16 +1,15 @@
 import inquirer from 'inquirer';
-import { getRootDir } from '../helper/sequelize-blueprint-config.helper';
-import { getServiceFolders } from '../utils/file-path.utils';
 import { logger } from '../utils/logger.utils';
 import { generateSequelizeFiles } from '../helper/generate-sequelize-files.helper';
+import { loadProjectConfig } from '../helper/mastermind-config.helper';
 
 export async function generateSequelizeAction(serviceName: string) {
-  const folders = getServiceFolders();
-  const baseDir = getRootDir();
-  if (folders.length === 0) {
-    logger.error(
-      `No existing services found in ${baseDir}. Please create a database first.`,
-    );
+  const projectConfig = loadProjectConfig();
+  if (
+    !projectConfig.services ||
+    Object.keys(projectConfig.services).length === 0
+  ) {
+    logger.warn('No existing services found. Please create a service first.');
     return;
   }
 

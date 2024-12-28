@@ -1,23 +1,21 @@
-import { getRootDir } from '../helper/sequelize-blueprint-config.helper';
 import path from 'path';
 import { renderTemplate } from '../helper/render-templates.helper';
 import fs from 'fs-extra';
 import { createSpinner } from 'nanospinner';
 import kleur from 'kleur';
+import { getConfigPaths } from '../helper/mastermind-config.helper';
 export async function scaffoldSequelizeTemplate(serviceName: string) {
   const spinner = createSpinner(
     kleur.cyan(`Scaffolding sequelize template for service: ${serviceName}\n`),
   ).start();
   await new Promise((resolve) => setTimeout(resolve, 1500));
 
-  const rootDir = getRootDir();
-  const baseDir = path.join(rootDir, serviceName, 'sequelize');
-  const subfolders = ['migrations', 'models', 'seeders'];
+  const configPaths = getConfigPaths(serviceName);
+  const baseDir = path.join(configPaths.rootDir, serviceName, 'sequelize');
 
-  // Create folders if not exist
-  await Promise.all(
-    subfolders.map((folder) => fs.ensureDir(path.join(baseDir, folder))),
-  );
+  await fs.ensureDir(configPaths.migrationsDir);
+  await fs.ensureDir(configPaths.modelsDir);
+  await fs.ensureDir(configPaths.seedersDir);
 
   await renderTemplate(
     `sequelize/config/config.ts.ejs`,
@@ -26,15 +24,10 @@ export async function scaffoldSequelizeTemplate(serviceName: string) {
     spinner,
   );
 
-  const sequelizercfilePath = path.join(
-    rootDir,
-    serviceName,
-    '/sequelize/',
-    '.sequelizerc',
-  );
+  const sequelizercFilePath = path.join(baseDir, '.sequelizerc');
   await renderTemplate(
     '/sequelize/sequelizerc.ejs',
-    sequelizercfilePath,
+    sequelizercFilePath,
     {},
     spinner,
   );

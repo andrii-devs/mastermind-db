@@ -1,10 +1,10 @@
 import fs from 'fs-extra';
 import path from 'path';
 import { renderTemplate } from '../helper/render-templates.helper';
-import { getRootDir } from '../helper/sequelize-blueprint-config.helper';
 import { logger } from '../utils/logger.utils';
 import { createSpinner } from 'nanospinner';
 import kleur from 'kleur';
+import { getConfigPaths } from '../helper/mastermind-config.helper';
 
 export async function scaffoldDatabase(
   serviceName: string,
@@ -21,8 +21,9 @@ export async function scaffoldDatabase(
   await new Promise((resolve) => setTimeout(resolve, 1500));
 
   try {
-    const config = getRootDir();
-    const baseDir = path.join(config, serviceName);
+    const configPaths = getConfigPaths(serviceName);
+    const baseDir = path.join(configPaths.rootDir, serviceName);
+
     const subfolders = ['docker'];
     // Create folders
     await Promise.all(

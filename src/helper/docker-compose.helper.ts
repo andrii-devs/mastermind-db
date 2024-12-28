@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import yaml from 'js-yaml';
-import { getRootDir } from './sequelize-blueprint-config.helper';
+import { getConfigPath, getRootDir } from './sequelize-blueprint-config.helper';
 import path from 'path';
 import { logger } from '../utils/logger.utils';
 import { createSpinner } from 'nanospinner';
@@ -11,6 +11,7 @@ import {
   startDockerContainer,
 } from '../service/manage-docker.service';
 import inquirer from 'inquirer';
+import { getConfigPaths } from './mastermind-config.helper';
 
 function sanitizeName(name: string): string {
   return name.trim().replace(/\s+/g, '-');
@@ -22,8 +23,8 @@ export async function buildDockerCompose(
   port: number,
 ) {
   const dockerComposeFile = './docker-compose.yml';
-  const rootDir = getRootDir();
-  const serviceDir = path.join(rootDir, serviceName);
+  const configPaths = getConfigPaths(serviceName);
+  const serviceDir = path.join(configPaths.rootDir, serviceName);
 
   const spinner = createSpinner(
     kleur.cyan(`Adding service ${serviceName} into the docker-compose.yml`),

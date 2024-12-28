@@ -1,22 +1,24 @@
 import inquirer from 'inquirer';
-import { getServiceFolders } from '../utils/file-path.utils';
 import { runSequelizeCommand } from '../helper/run-sequelize-command.helper';
-import { getRootDir } from '../helper/sequelize-blueprint-config.helper';
 import { logger } from '../utils/logger.utils';
 import path from 'path';
+import { loadProjectConfig } from '../helper/mastermind-config.helper';
 
 const APPLY_ALL_SEED = 'Apply all seeders';
 const UNDO_ALL_SEED = 'Undo all seeders';
 const UNDO_LATEST_SEED = 'Undo the latest seed';
 
 export async function manageSeedersAction(serviceName: string): Promise<void> {
-  const services = getServiceFolders();
-  const baseDir = getRootDir();
-
-  if (services.length === 0) {
-    logger.error('No services found. Please create a database first.');
+  const projectConfig = loadProjectConfig();
+  if (
+    !projectConfig.services ||
+    Object.keys(projectConfig.services).length === 0
+  ) {
+    logger.warn('No existing services found. Please create a service first.');
     return;
   }
+
+  const servicePath = path.join(projectConfig.rootDir, serviceName);
 
   const { environment } = await inquirer.prompt([
     {
@@ -35,8 +37,6 @@ export async function manageSeedersAction(serviceName: string): Promise<void> {
       choices: [APPLY_ALL_SEED, UNDO_ALL_SEED, UNDO_LATEST_SEED],
     },
   ]);
-
-  const servicePath = path.join(baseDir, serviceName);
 
   switch (operation) {
     case APPLY_ALL_SEED:

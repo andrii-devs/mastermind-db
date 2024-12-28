@@ -1,22 +1,23 @@
 import inquirer from 'inquirer';
-import { getServiceFolders } from '../utils/file-path.utils';
-import { getRootDir } from '../helper/sequelize-blueprint-config.helper';
 import { runSequelizeCommand } from '../helper/run-sequelize-command.helper';
 import { logger } from '../utils/logger.utils';
 import path from 'path';
+import { loadProjectConfig } from '../helper/mastermind-config.helper';
 
 const APPLY_ALL_MIGRATION = 'Apply all migrations';
 const UNDO_ALL_MIGRATION = 'Undo all migrations';
 const UNDO_LATEST_MIGRATION = 'Undo the latest migration';
 export async function manageMigrationsAction(serviceName: string) {
-  const services = getServiceFolders();
-  const baseDir = getRootDir();
-  if (services.length === 0) {
-    logger.error(
-      `No services found in ${baseDir}. Please create a database first.`,
-    );
+  const projectConfig = loadProjectConfig();
+  if (
+    !projectConfig.services ||
+    Object.keys(projectConfig.services).length === 0
+  ) {
+    logger.warn('No existing services found. Please create a service first.');
     return;
   }
+
+  const servicePath = path.join(projectConfig.rootDir, serviceName);
 
   const { environment } = await inquirer.prompt([
     {
@@ -36,8 +37,6 @@ export async function manageMigrationsAction(serviceName: string) {
       choices: [APPLY_ALL_MIGRATION, UNDO_ALL_MIGRATION, UNDO_LATEST_MIGRATION],
     },
   ]);
-
-  const servicePath = path.join(baseDir, serviceName);
 
   switch (operation) {
     case APPLY_ALL_MIGRATION:

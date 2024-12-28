@@ -2,8 +2,8 @@ import ejs from 'ejs';
 import fs from 'fs-extra';
 import path from 'path';
 import { logger } from '../utils/logger.utils';
-import { getRelativePath } from './sequelize-blueprint-config.helper';
 import { createSpinner } from 'nanospinner';
+import { getRelativePath } from './mastermind-config.helper';
 
 export async function renderTemplate(
   templatePath: string,
