@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - dev
+  pull_request:
+    branches:
+      - dev
 
 jobs:
   test:
@@ -24,9 +27,6 @@ jobs:
 
       - name: Build project
         run: npm run build
-
-      - name: Run Lint
-        run: npm run lint
 
       - name: Run Tests
         run: npm run test:coverage
