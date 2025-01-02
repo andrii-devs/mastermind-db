@@ -1,2 +1,14 @@
 node_modules
 dist
+
+.env
+
+docker-compose.yml
+
+build
+
+.mastermindrc
+
+*.tgz
+
+coverage

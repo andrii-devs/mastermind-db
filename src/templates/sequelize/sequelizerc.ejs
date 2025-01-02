@@ -1,0 +1,14 @@
+// .sequelizerc
+const path = require("path");
+require("ts-node/register");
+require("dotenv").config();
+
+const NODE_ENV = process.env.NODE_ENV || 'development';
+
+
+module.exports = {
+config: path.resolve(__dirname, `config.ts`),
+  migrationsPath: path.resolve(__dirname, 'migrations'),
+  seedersPath: path.resolve(__dirname, 'seeders'),
+  modelsPath: path.resolve(__dirname, 'models'),
+};

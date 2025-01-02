@@ -1,0 +1,46 @@
+import { Dialect } from "sequelize";
+import dotenv from "dotenv";
+
+dotenv.config({ path: "./docker/.env" });
+
+
+interface ISequelizeConfig {
+  [key: string]: {
+    dialect: Dialect;
+    host: string;
+    username: string;
+    password: string;
+    database: string;
+    port: number;
+  };
+}
+
+const config: ISequelizeConfig = {
+  development: {
+    dialect: process.env.DB_DIALECT as Dialect,
+    host: process.env.DB_HOST!,
+    username: process.env.DB_USERNAME!,
+    password: process.env.DB_PASSWORD!,
+    database: process.env.DB_NAME!,
+    port: Number(process.env.DB_PORT),
+  },
+  test: {
+    dialect: process.env.DB_DIALECT as Dialect,
+    host: process.env.DB_HOST!,
+    username: process.env.DB_USERNAME!,
+    password: process.env.DB_PASSWORD!,
+    database: process.env.DB_NAME!,
+    port: Number(process.env.DB_PORT),
+  },
+  production: {
+    dialect: process.env.DB_DIALECT as Dialect,
+    host: process.env.DB_HOST!,
+    username: process.env.DB_USERNAME!,
+    password: process.env.DB_PASSWORD!,
+    database: process.env.DB_NAME!,
+    port: Number(process.env.DB_PORT),
+  },
+};
+
+//@ts-ignore
+export = config;
