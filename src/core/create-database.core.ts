@@ -47,7 +47,7 @@ export async function createDatabaseAction() {
   const port = await allocatePort(dbType);
   const databaseMap: Record<string, string> = {
     MySQL: 'mysql',
-    PostgreSQL: 'postgres',
+    PostgreSQL: 'postgresql',
   };
 
   addOrUpdateProjectConfig(serviceName, ormType, rootDir);
