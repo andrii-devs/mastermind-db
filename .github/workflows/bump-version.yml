@@ -3,7 +3,8 @@ name: Version Bump
 on:
   pull_request:
     branches:
-      - dev
+      - main
+      - master
     types:
       - opened
 
