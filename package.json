@@ -18,8 +18,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/andriidevs/mastermind-db.git"
+    "url": "git+https://github.com/andrii-devs/mastermind-db.git"
   },
+  "homepage": "https://github.com/andrii-devs/mastermind-db#readme",
   "keywords": [
     "cli",
     "database",
