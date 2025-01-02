@@ -16,6 +16,10 @@
     "test": "jest",
     "test:coverage": "npm run test -- --coverage"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andriidevs/mastermind-db.git"
+  },
   "keywords": [
     "cli",
     "database",
