@@ -1,6 +1,11 @@
 name: Test
 
 on:
+  push:
+    branches:
+      - 'feat***'
+      - 'feat***'
+      - 'fix***'
   pull_request:
     branches:
       - dev
