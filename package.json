@@ -1,6 +1,6 @@
 {
   "name": "mastermind-db",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A CLI to manage database structures and ORM integrations with precision.",
   "bin": {
     "mastermind-db": "dist/index.js"
@@ -18,8 +18,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/andriidevs/mastermind-db.git"
+    "url": "git+https://github.com/andrii-devs/mastermind-db.git"
   },
+  "homepage": "https://github.com/andrii-devs/mastermind-db#readme",
   "keywords": [
     "cli",
     "database",
