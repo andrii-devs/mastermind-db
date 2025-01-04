@@ -1,6 +1,6 @@
 {
   "name": "mastermind-db",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A CLI to manage database structures and ORM integrations with precision.",
   "bin": {
     "mastermind-db": "dist/index.js"
@@ -46,6 +46,8 @@
     "kleur": "^4.1.5",
     "mysql2": "^3.11.5",
     "nanospinner": "^1.2.2",
+    "pg": "^8.13.1",
+    "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.5",
     "sequelize-cli": "6.2.0",
     "sequelize-typescript": "^2.1.6",

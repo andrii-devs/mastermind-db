@@ -22,7 +22,7 @@ export async function stopAndRemoveDockerContainer(
       `docker ps -q --filter name=${containerName}`,
     );
     if (containerStatus.trim()) {
-      await execAsync(`docker stop ${containerName}`);
+      await execAsync(`docker stop ${containerName} --remove-orphans`);
       logger.info(`Stopped Docker container: ${containerName}`);
 
       const rmCommand = removeVolumes

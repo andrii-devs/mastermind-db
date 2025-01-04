@@ -39,12 +39,12 @@ export async function buildDockerCompose(
 
     const volumeMappingPaths: Record<string, string> = {
       mysql: '/var/lib/mysql',
-      postgresql: '/var/lib/postgresql/data',
+      postgres: '/var/lib/postgresql/data',
       sqlite: '/data/sqlite',
     };
     const defaultPorts: Record<string, number> = {
       mysql: 3306,
-      postgresql: 5432,
+      postgres: 5432,
     };
 
     const sanitizedServiceName = sanitizeName(serviceName);
