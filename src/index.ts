@@ -6,7 +6,7 @@ import { Command } from 'commander';
 import { printLogo } from './utils/print-logo.utils';
 import { runCLI } from './cmd/cli';
 import { initCLI } from './cmd/init';
-import { initConfigIfNotExists } from './service/check-configration-file.service';
+import { initConfigIfNotExists } from './services/config/check-configration-file.service';
 
 const packageJson = JSON.parse(
   fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'),
@@ -32,7 +32,7 @@ program
   .description('Run the interactive Master Mind DB.')
   .action(async () => {
     await initConfigIfNotExists(version);
-    await runCLI(version);
+    await runCLI();
   });
 
 // Show help if no command is provided

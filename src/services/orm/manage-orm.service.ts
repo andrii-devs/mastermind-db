@@ -1,6 +1,6 @@
 import inquirer from 'inquirer';
-import { getConfigPaths } from '../helper/mastermind-config.helper';
-import { logger } from '../utils/logger.utils';
+import { getConfigPaths } from '../../helper/mastermind-config.helper';
+import { logger } from '../../utils/logger.utils';
 import {
   EXIT_CLI,
   GENERATE_FILES,
@@ -8,10 +8,11 @@ import {
   GO_BACK_SERVICE_MENU,
   MANAGE_MIGRATIONS,
   MANAGE_SEEDERS,
-} from '../utils/const.utils';
-import { generateSequelizeAction } from '../core/generate-sequelize.core';
-import { manageSeedersAction } from '../core/manage-seeders.core';
-import { manageMigrationsAction } from '../core/manage-migration.core';
+} from '../../utils/const.utils';
+import { generateSequelizeAction } from './generate-sequelize.service';
+import { manageSeedersAction } from './manage-seeders.service';
+import { manageMigrationsAction } from './manage-migration.service';
+import { runCLI } from '../../cmd/cli';
 
 export async function manageORMService(
   serviceName: string,
@@ -20,14 +21,14 @@ export async function manageORMService(
   const { rootDir, orm, migrationsDir, modelsDir, seedersDir } =
     getConfigPaths(serviceName);
 
-  if (showInfo) {
-    logger.info(`Managing service: ${serviceName}`);
-    logger.info(`Root Directory: ${rootDir}`);
-    logger.info(`Service ORM: ${orm}`);
-    logger.info(`Migrations Directory: ${migrationsDir}`);
-    logger.info(`Models Directory: ${modelsDir}`);
-    logger.info(`Seeders Directory: ${seedersDir}`);
-  }
+  // if (showInfo) {
+  //   logger.info(`Managing service: ${serviceName}`);
+  //   logger.info(`Root Directory: ${rootDir}`);
+  //   logger.info(`Service ORM: ${orm}`);
+  //   logger.info(`Migrations Directory: ${migrationsDir}`);
+  //   logger.info(`Models Directory: ${modelsDir}`);
+  //   logger.info(`Seeders Directory: ${seedersDir}`);
+  // }
 
   switch (orm) {
     case 'Sequelize':
@@ -65,14 +66,13 @@ async function manageSequelizeAction(serviceName: string, choice: string) {
 
     case MANAGE_MIGRATIONS:
       await manageMigrationsAction(serviceName);
-      await askForReturnOrExit(serviceName);
       break;
 
     case MANAGE_SEEDERS:
       await manageSeedersAction(serviceName);
-      await askForReturnOrExit(serviceName);
       break;
     case GO_BACK_MAIN_MENU:
+      await runCLI();
       return;
 
     case EXIT_CLI:
@@ -97,6 +97,7 @@ async function askForReturnOrExit(serviceName: string) {
   if (nextAction === GO_BACK_SERVICE_MENU) {
     await manageORMService(serviceName, false);
   } else if (nextAction === GO_BACK_MAIN_MENU) {
+    await runCLI();
     return;
   } else {
     logger.success('Exiting Master Mind DB. Goodbye!');

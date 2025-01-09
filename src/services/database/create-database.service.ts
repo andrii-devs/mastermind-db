@@ -1,10 +1,10 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { renderTemplate } from '../helper/render-templates.helper';
-import { logger } from '../utils/logger.utils';
+import { renderTemplate } from '../../helper/render-templates.helper';
+import { logger } from '../../utils/logger.utils';
 import { createSpinner } from 'nanospinner';
 import kleur from 'kleur';
-import { getConfigPaths } from '../helper/mastermind-config.helper';
+import { getConfigPaths } from '../../helper/mastermind-config.helper';
 
 export async function scaffoldDatabase(
   serviceName: string,

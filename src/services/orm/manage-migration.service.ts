@@ -1,8 +1,14 @@
 import inquirer from 'inquirer';
-import { runSequelizeCommand } from '../helper/run-sequelize-command.helper';
-import { logger } from '../utils/logger.utils';
+import { runSequelizeCommand } from '../../helper/run-sequelize-command.helper';
+import { logger } from '../../utils/logger.utils';
 import path from 'path';
-import { loadProjectConfig } from '../helper/mastermind-config.helper';
+import { loadProjectConfig } from '../../helper/mastermind-config.helper';
+import {
+  EXIT_CLI,
+  GO_BACK_MIGRATION_MENU,
+  GO_BACK_SERVICE_MENU,
+} from '../../utils/const.utils';
+import { manageORMService } from './manage-orm.service';
 
 const APPLY_ALL_MIGRATION = 'Apply all migrations';
 const UNDO_ALL_MIGRATION = 'Undo all migrations';
@@ -29,18 +35,32 @@ export async function manageMigrationsAction(serviceName: string) {
     },
   ]);
 
+  await migrationsAction(serviceName, servicePath, environment);
+}
+
+async function migrationsAction(
+  serviceName: string,
+  servicePath: string,
+  environment: string,
+) {
   const { operation } = await inquirer.prompt([
     {
       type: 'list',
       name: 'operation',
       message: `What would you like to do with migrations for "${serviceName}"?`,
-      choices: [APPLY_ALL_MIGRATION, UNDO_ALL_MIGRATION, UNDO_LATEST_MIGRATION],
+      choices: [
+        APPLY_ALL_MIGRATION,
+        UNDO_ALL_MIGRATION,
+        UNDO_LATEST_MIGRATION,
+        'Go back ORM menu',
+      ],
     },
   ]);
 
   switch (operation) {
     case APPLY_ALL_MIGRATION:
       await runSequelizeCommand('db:migrate', servicePath, environment);
+      await askForReturnOrExit(serviceName, servicePath, environment);
       break;
 
     case UNDO_ALL_MIGRATION:
@@ -60,14 +80,44 @@ export async function manageMigrationsAction(serviceName: string) {
         );
       }
 
+      await askForReturnOrExit(serviceName, servicePath, environment);
       break;
 
     case UNDO_LATEST_MIGRATION:
       await runSequelizeCommand('db:migrate:undo', servicePath, environment);
+      await askForReturnOrExit(serviceName, servicePath, environment);
+      break;
+
+    default:
+      await manageORMService(serviceName);
       break;
   }
 }
 
 function sanitazeMigration(migration: string): string {
   return migration.replace('.ts', '');
+}
+
+async function askForReturnOrExit(
+  serviceName: string,
+  servicePath: string,
+  environment: string,
+) {
+  const { nextAction } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'nextAction',
+      message: 'What would you like to do next?',
+      choices: [GO_BACK_MIGRATION_MENU, GO_BACK_SERVICE_MENU, EXIT_CLI],
+    },
+  ]);
+
+  if (nextAction === GO_BACK_MIGRATION_MENU) {
+    await migrationsAction(serviceName, servicePath, environment);
+  } else if (nextAction === GO_BACK_SERVICE_MENU) {
+    await manageORMService(serviceName);
+  } else {
+    logger.success('Exiting Master Mind DB. Goodbye!');
+    process.exit(0);
+  }
 }
