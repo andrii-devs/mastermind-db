@@ -13,7 +13,7 @@ import {
   isContainerRunning,
   isDockerRunning,
   stopAndRemoveDockerContainer,
-} from '../service/manage-docker.service';
+} from '../operations/manage-docker.operation';
 
 export async function deleteServiceAction() {
   const projectConfig = loadProjectConfig();
@@ -60,16 +60,25 @@ export async function deleteServiceAction() {
   try {
     if (fs.existsSync(serviceDir)) {
       await fs.remove(serviceDir);
-      logger.info(`Removed service folder: ${serviceDir}`);
+      spinner.info(kleur.cyan(`Removed service folder: ${serviceDir}`));
+      // logger.info(`Removed service folder: ${serviceDir}`);
     } else {
-      logger.warn(`Service folder "${serviceDir}" does not exist.`);
+      spinner.warn(
+        kleur.yellow(`Service folder "${serviceDir}" does not exist.`),
+      );
+      // logger.warn(`Service folder "${serviceDir}" does not exist.`);
     }
 
     delete projectConfig.services[selectedService];
     saveProjectConfig(projectConfig);
 
-    logger.info(
-      `Removed "${selectedService}" from .mastermindrc configuration.`,
+    // logger.info(
+    //   `Removed "${selectedService}" from .mastermindrc configuration.`,
+    // );
+    spinner.info(
+      kleur.cyan(
+        `Removed "${selectedService}" from .mastermindrc configuration`,
+      ),
     );
 
     const dockerComposePath = './docker-compose.yml';
