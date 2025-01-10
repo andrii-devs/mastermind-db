@@ -2,9 +2,9 @@ import inquirer from 'inquirer';
 import {
   loadProjectConfig,
   saveProjectConfig,
-} from '../helper/mastermind-config.helper';
-import { logger } from '../utils/logger.utils';
-import { printLogo } from '../utils/print-logo.utils';
+} from '../../helper/mastermind-config.helper';
+import { logger } from '../../utils/logger.utils';
+import { printLogo } from '../../utils/print-logo.utils';
 
 export async function initConfigIfNotExists(version: string) {
   const config = loadProjectConfig();

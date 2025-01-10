@@ -1,9 +1,9 @@
 import inquirer from 'inquirer';
 import { DBType } from '../types';
 import { allocatePort } from '../helper/allocate-port.helper';
-import { scaffoldDatabase } from '../service/scaffold-database.service';
-import { scaffoldDockerCompose } from '../service/scaffold-docker-compose.service';
-import { scaffoldSequelizeTemplate } from '../service/scaffold-sequelize-files.service';
+import { scaffoldDatabase } from '../services/database/create-database.service';
+import { scaffoldDockerCompose } from '../services/docker/create-docker-compose.service';
+import { scaffoldSequelizeTemplate } from '../operations/scaffold-sequelize-files.operation';
 import { logger } from '../utils/logger.utils';
 import {
   addOrUpdateProjectConfig,

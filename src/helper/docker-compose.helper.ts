@@ -8,7 +8,7 @@ import {
   isContainerRunning,
   isDockerRunning,
   startDockerContainer,
-} from '../service/manage-docker.service';
+} from '../operations/manage-docker.operation';
 import inquirer from 'inquirer';
 import { getConfigPaths } from './mastermind-config.helper';
 
@@ -86,7 +86,8 @@ export async function buildDockerCompose(
         volumes: [`${volumeKey}:${volumePath}`],
       };
       spinner.stop();
-      logger.info(`Added service: "${serviceKey}"`);
+      spinner.info(kleur.cyan(`Added service: "${serviceKey}"`));
+      // logger.info(`Added service: "${serviceKey}"`);
       spinner.start();
     } else {
       spinner.stop();
@@ -98,7 +99,8 @@ export async function buildDockerCompose(
     if (!dockerCompose.volumes[volumeKey]) {
       dockerCompose.volumes[volumeKey] = {};
       spinner.stop();
-      logger.info(`Added volume: "${volumeKey}"`);
+      spinner.info(kleur.cyan(`Added volume: "${volumeKey}"`));
+      // logger.info(`Added volume: "${volumeKey}"`);
       spinner.start();
     } else {
       spinner.stop();

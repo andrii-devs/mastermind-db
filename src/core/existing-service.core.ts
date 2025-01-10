@@ -1,7 +1,7 @@
 import inquirer from 'inquirer';
 import { loadProjectConfig } from '../helper/mastermind-config.helper';
 import { logger } from '../utils/logger.utils';
-import { manageORMService } from '../service/manage-orm.service';
+import { manageORMService } from '../services/orm/manage-orm.service';
 
 export async function manageExistingService() {
   const projectConfig = loadProjectConfig();

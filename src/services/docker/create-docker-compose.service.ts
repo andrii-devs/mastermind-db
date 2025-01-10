@@ -3,8 +3,8 @@ import inquirer from 'inquirer';
 import {
   createDockerComposeFile,
   buildDockerCompose,
-} from '../helper/docker-compose.helper';
-import { logger } from '../utils/logger.utils';
+} from '../../helper/docker-compose.helper';
+import { logger } from '../../utils/logger.utils';
 
 export async function scaffoldDockerCompose(
   serviceName: string,

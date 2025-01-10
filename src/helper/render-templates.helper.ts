@@ -4,6 +4,7 @@ import path from 'path';
 import { logger } from '../utils/logger.utils';
 import { createSpinner } from 'nanospinner';
 import { getRelativePath } from './mastermind-config.helper';
+import kleur from 'kleur';
 
 export async function renderTemplate(
   templatePath: string,
@@ -25,7 +26,8 @@ export async function renderTemplate(
 
     const relativeOutputPath = getRelativePath(process.cwd(), outputPath);
     spinner?.stop();
-    logger.info(`Generated file: ${relativeOutputPath}`);
+    spinner?.info(kleur.cyan(`Generated file: ${relativeOutputPath}`));
+    // logger.info(`Generated file: ${relativeOutputPath}`);
     spinner?.start();
   } catch (err) {
     spinner?.stop();

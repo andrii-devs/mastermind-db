@@ -16,3 +16,8 @@ export const MANAGE_SEEDERS = 'Manage seeders';
 export const EXIT_CLI = kleur.red('Exit');
 export const GO_BACK_MAIN_MENU = 'Go back to the main menu';
 export const GO_BACK_SERVICE_MENU = 'Go back to the service menu';
+
+// Manage actions menu
+
+export const GO_BACK_MIGRATION_MENU = 'Go back to the migration menu';
+export const GO_BACK_SEED_MENU = 'Go back to the seed menu';

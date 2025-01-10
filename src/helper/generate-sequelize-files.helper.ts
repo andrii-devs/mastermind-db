@@ -9,6 +9,7 @@ export async function generateSequelizeFiles(
   fileTypes: string[],
 ) {
   const configPaths = getConfigPaths(serviceName);
+  const timestamp = getTimestamp();
 
   for (const type of fileTypes) {
     switch (type) {
@@ -22,7 +23,6 @@ export async function generateSequelizeFiles(
               input.trim() !== '' ? true : 'Migration name cannot be empty',
           },
         ]);
-        const timestamp = getTimestamp();
         const fileName = `${timestamp}-${migrationName.toLocaleLowerCase()}.ts`;
         const migrationPath = path.join(configPaths.migrationsDir, fileName);
 
@@ -55,7 +55,7 @@ export async function generateSequelizeFiles(
           },
         ]);
 
-        const seedFileName = `${seederName}.seed.ts`;
+        const seedFileName = `${timestamp}-${seederName.toLocaleLowerCase()}.seed.ts`;
         const seederPath = path.join(configPaths.seedersDir, seedFileName);
 
         await renderTemplate('sequelize/seeders/seed.ejs', seederPath, {
@@ -83,12 +83,14 @@ export async function generateSequelizeFiles(
             default: modelName,
           },
         ]);
-        const modelFileName = `${modelName}.model.ts`;
+        const modelFileName = `${modelName.toLocaleLowerCase()}.model.ts`;
         const filePath = path.join(configPaths.modelsDir, modelFileName);
+        const modelClassName = capitalizeString(modelName);
 
         await renderTemplate('/sequelize/models/model.ejs', filePath, {
           modelName,
           tableName,
+          modelClassName,
         });
 
         break;
@@ -96,4 +98,8 @@ export async function generateSequelizeFiles(
         break;
     }
   }
+}
+
+function capitalizeString(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }

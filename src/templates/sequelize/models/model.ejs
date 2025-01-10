@@ -1,7 +1,7 @@
 import { Model, Table, Column, DataType, CreatedAt, UpdatedAt } from 'sequelize-typescript';
 
 @Table({ tableName: '<%= tableName %>', timestamps: true })
-export class <%= modelName %> extends Model {
+export class <%= modelClassName %> extends Model<<%= modelClassName %>> {
 
  /*
  An example of model
