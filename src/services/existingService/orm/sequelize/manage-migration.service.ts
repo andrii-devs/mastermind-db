@@ -1,18 +1,20 @@
 import inquirer from 'inquirer';
-import { runSequelizeCommand } from '../../helper/run-sequelize-command.helper';
-import { logger } from '../../utils/logger.utils';
+import { logger } from '../../../../utils/logger.utils';
 import path from 'path';
-import { loadProjectConfig } from '../../helper/mastermind-config.helper';
+import { loadProjectConfig } from '../../../../helper/mastermind-config.helper';
 import {
+  APPLY_ALL_MIGRATION,
   EXIT_CLI,
   GO_BACK_MIGRATION_MENU,
   GO_BACK_SERVICE_MENU,
-} from '../../utils/const.utils';
-import { manageORMService } from './manage-orm.service';
+  RETURN_ORM_MENU,
+  UNDO_ALL_MIGRATION,
+  UNDO_LATEST_MIGRATION,
+} from '../../../../utils/const.utils';
+import { manageORMService } from '../manage-orm.service';
+import { getDynamicSeparator } from '../../../../utils/strings.utils';
+import { runSequelizeCommand } from '../../../../operations/sequelize-files.operation';
 
-const APPLY_ALL_MIGRATION = 'Apply all migrations';
-const UNDO_ALL_MIGRATION = 'Undo all migrations';
-const UNDO_LATEST_MIGRATION = 'Undo the latest migration';
 export async function manageMigrationsAction(serviceName: string) {
   const projectConfig = loadProjectConfig();
   if (
@@ -30,7 +32,25 @@ export async function manageMigrationsAction(serviceName: string) {
       type: 'list',
       name: 'environment',
       message: 'Select the environment:',
-      choices: ['development', 'production', 'test'],
+      choices: [
+        {
+          name: '🛠️  Development',
+          value: 'development',
+          description: 'Environment for development and testing new features.',
+        },
+        {
+          name: '🚀 Production',
+          value: 'production',
+          description:
+            'Live environment for deploying the application to end users.',
+        },
+        {
+          name: '🧪 Test',
+          value: 'test',
+          description:
+            'Environment for running automated tests and QA validations.',
+        },
+      ],
       default: 'development',
     },
   ]);
@@ -49,21 +69,42 @@ async function migrationsAction(
       name: 'operation',
       message: `What would you like to do with migrations for "${serviceName}"?`,
       choices: [
-        APPLY_ALL_MIGRATION,
-        UNDO_ALL_MIGRATION,
-        UNDO_LATEST_MIGRATION,
-        'Go back ORM menu',
+        {
+          name: APPLY_ALL_MIGRATION,
+          value: 'applyAllMigrations',
+          description:
+            'Run all pending migrations to update the database schema to the latest state.',
+        },
+        {
+          name: UNDO_ALL_MIGRATION,
+          value: 'undoAllMigrations',
+          description:
+            'Revert all applied migrations and reset the database schema to its initial state.',
+        },
+        {
+          name: UNDO_LATEST_MIGRATION,
+          value: 'undoLatestMigrations',
+          description:
+            'Revert only the last applied migration to undo the most recent schema change.',
+        },
+        new inquirer.Separator(getDynamicSeparator()),
+        {
+          name: RETURN_ORM_MENU,
+          value: 'ormMenu',
+          description:
+            'Go back to the ORM management menu to perform other operations.',
+        },
       ],
     },
   ]);
 
   switch (operation) {
-    case APPLY_ALL_MIGRATION:
+    case 'applyAllMigrations':
       await runSequelizeCommand('db:migrate', servicePath, environment);
       await askForReturnOrExit(serviceName, servicePath, environment);
       break;
 
-    case UNDO_ALL_MIGRATION:
+    case 'undoAllMigrations':
       const { confirmUndo } = await inquirer.prompt([
         {
           type: 'confirm',
@@ -83,7 +124,7 @@ async function migrationsAction(
       await askForReturnOrExit(serviceName, servicePath, environment);
       break;
 
-    case UNDO_LATEST_MIGRATION:
+    case 'undoLatestMigrations':
       await runSequelizeCommand('db:migrate:undo', servicePath, environment);
       await askForReturnOrExit(serviceName, servicePath, environment);
       break;
@@ -92,10 +133,6 @@ async function migrationsAction(
       await manageORMService(serviceName);
       break;
   }
-}
-
-function sanitazeMigration(migration: string): string {
-  return migration.replace('.ts', '');
 }
 
 async function askForReturnOrExit(
@@ -120,4 +157,8 @@ async function askForReturnOrExit(
     logger.success('Exiting Master Mind DB. Goodbye!');
     process.exit(0);
   }
+}
+
+function sanitazeMigration(migration: string): string {
+  return migration.replace('.ts', '');
 }

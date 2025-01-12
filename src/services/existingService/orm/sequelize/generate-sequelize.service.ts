@@ -1,7 +1,7 @@
 import inquirer from 'inquirer';
-import { logger } from '../../utils/logger.utils';
-import { generateSequelizeFiles } from '../../helper/generate-sequelize-files.helper';
-import { loadProjectConfig } from '../../helper/mastermind-config.helper';
+import { logger } from '../../../../utils/logger.utils';
+import { loadProjectConfig } from '../../../../helper/mastermind-config.helper';
+import { generateSequelizeFiles } from '../../../../operations/sequelize-files.operation';
 
 export async function generateSequelizeAction(serviceName: string) {
   const projectConfig = loadProjectConfig();

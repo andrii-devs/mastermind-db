@@ -1,10 +1,10 @@
 import fs from 'fs-extra';
 import inquirer from 'inquirer';
-import {
-  createDockerComposeFile,
-  buildDockerCompose,
-} from '../../helper/docker-compose.helper';
 import { logger } from '../../utils/logger.utils';
+import {
+  buildDockerCompose,
+  createDockerComposeFile,
+} from '../../operations/manage-docker.operation';
 
 export async function scaffoldDockerCompose(
   serviceName: string,

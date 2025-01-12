@@ -1,6 +1,6 @@
 import inquirer from 'inquirer';
-import { getConfigPaths } from '../../helper/mastermind-config.helper';
-import { logger } from '../../utils/logger.utils';
+import { getConfigPaths } from '../../../helper/mastermind-config.helper';
+import { logger } from '../../../utils/logger.utils';
 import {
   EXIT_CLI,
   GENERATE_FILES,
@@ -8,11 +8,12 @@ import {
   GO_BACK_SERVICE_MENU,
   MANAGE_MIGRATIONS,
   MANAGE_SEEDERS,
-} from '../../utils/const.utils';
-import { generateSequelizeAction } from './generate-sequelize.service';
-import { manageSeedersAction } from './manage-seeders.service';
-import { manageMigrationsAction } from './manage-migration.service';
-import { runCLI } from '../../cmd/cli';
+} from '../../../utils/const.utils';
+import { generateSequelizeAction } from './sequelize/generate-sequelize.service';
+import { manageSeedersAction } from './sequelize/manage-seeders.service';
+import { manageMigrationsAction } from './sequelize/manage-migration.service';
+import { runCLI } from '../../../cmd/cli';
+import { getDynamicSeparator } from '../../../utils/strings.utils';
 
 export async function manageORMService(
   serviceName: string,
@@ -38,11 +39,32 @@ export async function manageORMService(
           name: 'action',
           message: `Select an action for service "${serviceName}?" (${orm}):`,
           choices: [
-            GENERATE_FILES,
-            MANAGE_MIGRATIONS,
-            MANAGE_SEEDERS,
-            GO_BACK_MAIN_MENU,
-            EXIT_CLI,
+            {
+              name: GENERATE_FILES,
+              value: 'generate',
+              description:
+                'Generate new Sequelize files, such as migrations, models, and seeders for your project.',
+            },
+            {
+              name: MANAGE_MIGRATIONS,
+              value: 'migrations',
+              description:
+                'View and manage existing database migrations to keep your schema up to date.',
+            },
+            {
+              name: MANAGE_SEEDERS,
+              value: 'seeders',
+              description:
+                'Add or modify seeders for populating your database with default or test data.',
+            },
+            new inquirer.Separator(getDynamicSeparator()),
+
+            { name: GO_BACK_MAIN_MENU, value: 'menu' },
+            {
+              name: EXIT_CLI,
+              value: 'exit',
+              description: 'Quit the CLI application.',
+            },
           ],
           loop: false,
         },
@@ -59,23 +81,23 @@ export async function manageORMService(
 
 async function manageSequelizeAction(serviceName: string, choice: string) {
   switch (choice) {
-    case GENERATE_FILES:
+    case 'generate':
       await generateSequelizeAction(serviceName);
       await askForReturnOrExit(serviceName);
       break;
 
-    case MANAGE_MIGRATIONS:
+    case 'migrations':
       await manageMigrationsAction(serviceName);
       break;
 
-    case MANAGE_SEEDERS:
+    case 'seeders':
       await manageSeedersAction(serviceName);
       break;
-    case GO_BACK_MAIN_MENU:
+    case 'menu':
       await runCLI();
       return;
 
-    case EXIT_CLI:
+    case 'exit':
       logger.success('Exiting Master Mind DB. Goodbye!');
       process.exit(0);
 

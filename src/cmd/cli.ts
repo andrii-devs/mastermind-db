@@ -16,6 +16,7 @@ import { manageExistingService } from '../core/existing-service.core';
 import { deleteServiceAction } from '../core/delete-service.core';
 import fs from 'fs-extra';
 import path from 'path';
+import { getDynamicSeparator } from '../utils/strings.utils';
 
 dotenv.config();
 
@@ -35,35 +36,61 @@ export async function runCLI() {
         name: 'action',
         message: 'What would you like to do?',
         choices: [
-          CREATE_SERVICE,
-          MANAGE_EXISTING_SERVICE,
-          DELETE_SERVICE,
-          CONFIGURE_SETTINGS,
-          EXIT_CLI,
+          {
+            name: CREATE_SERVICE,
+            value: 'create',
+            description:
+              'Create a new service to start managing your configurations and operations.',
+          },
+
+          {
+            name: MANAGE_EXISTING_SERVICE,
+            value: 'manage',
+            description:
+              'Access and manage configurations, database, or Docker containers for an existing service.',
+          },
+          {
+            name: DELETE_SERVICE,
+            value: 'delete',
+            description:
+              'Remove an existing service and its related configurations permanently.',
+          },
+          {
+            name: CONFIGURE_SETTINGS,
+            value: 'configureSettings',
+            description:
+              'Modify the global settings of the CLI to suit your project needs.',
+          },
+          new inquirer.Separator(getDynamicSeparator()),
+          {
+            name: EXIT_CLI,
+            value: 'exit',
+            description: 'Quit the CLI application.',
+          },
         ],
         loop: false,
       },
     ]);
 
     switch (action) {
-      case CREATE_SERVICE:
+      case 'create':
         await createDatabaseAction();
         await askForReturnOrExit();
         break;
 
-      case MANAGE_EXISTING_SERVICE:
+      case 'manage':
         await manageExistingService();
         break;
 
-      case CONFIGURE_SETTINGS:
+      case 'configureSettings':
         await configureCLI();
         break;
 
-      case DELETE_SERVICE:
+      case 'delete':
         await deleteServiceAction();
         break;
 
-      case EXIT_CLI:
+      case 'exit':
         logger.success(kleur.bold('\nThank you for using Master Mind DB 🛠️'));
         exitCLI = true;
         break;
