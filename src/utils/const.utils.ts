@@ -8,6 +8,7 @@ export const DELETE_SERVICE = '🗑️  Delete a Service';
 export const MANAGE_ORM_FILES = '📂 Manage ORM Files and Configurations';
 export const MANAGE_DOCKER_CONTAINERS = '🐳 Manage Docker Containers';
 export const MANAGE_DATABASE_OPERATIONS = '💾 Manage Database Operations';
+export const MANAGE_BACKUPS_AND_PURGE = '🗄️  Manage Backups & Data Purge';
 
 // Selected Service/ORM menu
 export const GENERATE_FILES =
@@ -32,3 +33,7 @@ export const GO_BACK_SEED_MENU = '🔙 Return to Seeders Menu';
 export const EXIT_CLI = '❌ Exit';
 export const GO_BACK_MAIN_MENU = '🔙 Return to Main Menu';
 export const GO_BACK_SERVICE_MENU = '🔙 Return to Service Menu';
+export const GO_BACK_SELECTED_DATABASE_MENU =
+  '🔙 Return to Selected Database Menu';
+
+export const GO_BACK_BACKUPS_PURGE_MENU = '🔙 Return to Backups & Purge Menu';
