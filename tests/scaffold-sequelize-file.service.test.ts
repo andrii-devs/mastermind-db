@@ -1,4 +1,4 @@
-import { scaffoldSequelizeTemplate } from '../src/service/scaffold-sequelize-files.service';
+import { scaffoldSequelizeTemplate } from '../src/operations/sequelize-files.operation';
 import fs from 'fs-extra';
 import { renderTemplate } from '../src/helper/render-templates.helper';
 import path from 'path';

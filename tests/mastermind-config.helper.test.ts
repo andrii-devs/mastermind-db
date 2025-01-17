@@ -14,6 +14,7 @@ jest.mock('fs-extra');
 jest.mock('../src/utils/logger.utils');
 
 const mockService = 'test-service';
+const mockDatabase = 'mysql';
 const mockOrm = 'sequelize';
 const mockConfig = {
   rootDir: DEFAULT_ROOT_DIR,
@@ -51,7 +52,7 @@ describe('Master mind db configuration', () => {
       JSON.stringify({ services: {} }),
     );
 
-    addOrUpdateProjectConfig(mockService, mockOrm);
+    addOrUpdateProjectConfig(mockService, mockOrm, mockDatabase);
 
     expect(fs.writeFileSync).toHaveBeenCalledWith(
       expect.any(String),
