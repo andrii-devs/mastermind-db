@@ -13,6 +13,7 @@ interface IProjectConfig {
   rootDir: string;
   services: {
     [serviceName: string]: {
+      database: string;
       orm: string;
       migrationsDir: string;
       modelsDir: string;
@@ -41,12 +42,14 @@ export function saveProjectConfig(config: Record<string, any>): void {
 export function addOrUpdateProjectConfig(
   serviceName: string,
   orm: string,
+  dbType: string,
   rootDir: string = DEFAULT_ROOT_DIR,
 ): void {
   const projectConfig = loadProjectConfig();
 
   projectConfig.rootDir = rootDir;
   projectConfig.services[serviceName] = {
+    database: dbType,
     orm,
     migrationsDir: path.join(
       rootDir,
@@ -61,8 +64,9 @@ export function addOrUpdateProjectConfig(
   saveProjectConfig(projectConfig);
 }
 
-interface IConfigPath {
+export interface IConfigPath {
   rootDir: string;
+  database: string;
   orm: string;
   migrationsDir: string;
   modelsDir: string;

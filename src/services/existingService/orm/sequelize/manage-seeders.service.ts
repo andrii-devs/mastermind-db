@@ -1,18 +1,18 @@
 import inquirer from 'inquirer';
-import { runSequelizeCommand } from '../../helper/run-sequelize-command.helper';
-import { logger } from '../../utils/logger.utils';
+import { logger } from '../../../../utils/logger.utils';
 import path from 'path';
-import { loadProjectConfig } from '../../helper/mastermind-config.helper';
+import { loadProjectConfig } from '../../../../helper/mastermind-config.helper';
 import {
+  APPLY_ALL_SEED,
   EXIT_CLI,
   GO_BACK_SEED_MENU,
   GO_BACK_SERVICE_MENU,
-} from '../../utils/const.utils';
-import { manageORMService } from './manage-orm.service';
-
-const APPLY_ALL_SEED = 'Apply all seeders';
-const UNDO_ALL_SEED = 'Undo all seeders';
-const UNDO_LATEST_SEED = 'Undo the latest seed';
+  UNDO_ALL_SEED,
+  UNDO_LATEST_SEED,
+} from '../../../../utils/const.utils';
+import { manageORMService } from '../manage-orm.service';
+import { getDynamicSeparator } from '../../../../utils/strings.utils';
+import { runSequelizeCommand } from '../../../../operations/sequelize-files.operation';
 
 export async function manageSeedersAction(serviceName: string): Promise<void> {
   const projectConfig = loadProjectConfig();
@@ -31,7 +31,25 @@ export async function manageSeedersAction(serviceName: string): Promise<void> {
       type: 'list',
       name: 'environment',
       message: 'Select the environment:',
-      choices: ['development', 'production', 'test'],
+      choices: [
+        {
+          name: '🛠️  Development',
+          value: 'development',
+          description: 'Environment for development and testing new features.',
+        },
+        {
+          name: '🚀 Production',
+          value: 'production',
+          description:
+            'Live environment for deploying the application to end users.',
+        },
+        {
+          name: '🧪 Test',
+          value: 'test',
+          description:
+            'Environment for running automated tests and QA validations.',
+        },
+      ],
       default: 'development',
     },
   ]);
@@ -50,26 +68,42 @@ async function seedersAction(
       name: 'operation',
       message: `What would you like to do with seeders for "${serviceName}"?`,
       choices: [
-        APPLY_ALL_SEED,
-        UNDO_ALL_SEED,
-        UNDO_LATEST_SEED,
-        GO_BACK_SERVICE_MENU,
+        {
+          name: APPLY_ALL_SEED,
+          value: 'applyAllSeeds',
+          description:
+            'Execute all seeders to populate the database with initial data.',
+        },
+        {
+          name: UNDO_ALL_SEED,
+          value: 'undoAllSeeds',
+          description:
+            'Revert all seeders to clear the seeded data from the database.',
+        },
+        {
+          name: UNDO_LATEST_SEED,
+          value: 'undoLatestSeed',
+          description:
+            'Revert the changes made by the most recently executed seeder.',
+        },
+        new inquirer.Separator(getDynamicSeparator()),
+        { name: GO_BACK_SERVICE_MENU, value: 'menu' },
       ],
     },
   ]);
 
   switch (operation) {
-    case APPLY_ALL_SEED:
+    case 'applyAllSeeds':
       await runSequelizeCommand('db:seed:all', servicePath, environment);
       await askForReturnOrExit(serviceName, servicePath, environment);
       break;
 
-    case UNDO_ALL_SEED:
+    case 'undoAllSeeds':
       await runSequelizeCommand('db:seed:undo:all', servicePath, environment);
       await askForReturnOrExit(serviceName, servicePath, environment);
       break;
 
-    case UNDO_LATEST_SEED:
+    case 'undoLatestSeed':
       await runSequelizeCommand('db:seed:undo', servicePath, environment);
       await askForReturnOrExit(serviceName, servicePath, environment);
       break;

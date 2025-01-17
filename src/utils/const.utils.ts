@@ -1,23 +1,39 @@
-import kleur from 'kleur';
-
 //First level menu items
-export const CREATE_SERVICE = 'Create a new service';
-export const MANAGE_EXISTING_SERVICE = 'Manage existing service';
-export const CONFIGURE_SETTINGS = 'Configuration';
-export const DELETE_SERVICE = 'Delete a service';
+export const CREATE_SERVICE = '✨ Create a New Service';
+export const MANAGE_EXISTING_SERVICE = '🧰 Manage Existing Service';
+export const CONFIGURE_SETTINGS = '🔧 Configuration';
+export const DELETE_SERVICE = '🗑️  Delete a Service';
 
-// Second lvl menu items
+//Selected Service Menu
+export const MANAGE_ORM_FILES = '📂 Manage ORM Files and Configurations';
+export const MANAGE_DOCKER_CONTAINERS = '🐳 Manage Docker Containers';
+export const MANAGE_DATABASE_OPERATIONS = '💾 Manage Database Operations';
+export const MANAGE_BACKUPS_AND_PURGE = '🗄️  Manage Backups & Data Purge';
+
+// Selected Service/ORM menu
 export const GENERATE_FILES =
-  'Generate sequelize files (migrations/models/seeders):';
-export const MANAGE_MIGRATIONS = 'Manage migrations';
-export const MANAGE_SEEDERS = 'Manage seeders';
+  '🛠️  Generate New Sequelize Files (Migrations/Models/Seeders):';
+export const MANAGE_MIGRATIONS = '📜 Manage Existing Migrations';
+export const MANAGE_SEEDERS = '🌱 Manage Seeders';
+
+// Selected Service/ORM menu/Sequelize
+export const APPLY_ALL_MIGRATION = '📥 Apply All migrations';
+export const UNDO_ALL_MIGRATION = '🔄 Undo All migrations';
+export const UNDO_LATEST_MIGRATION = '⏮️  Undo the Latest Migration';
+
+export const APPLY_ALL_SEED = '📥 Apply All Seeders';
+export const UNDO_ALL_SEED = '🔄 Undo All Seeders';
+export const UNDO_LATEST_SEED = '⏮️  Undo the Latest Seed';
+
+export const RETURN_ORM_MENU = '🔙 Return to ORM Menu';
+export const GO_BACK_MIGRATION_MENU = '🔙 Return to Migration Menu';
+export const GO_BACK_SEED_MENU = '🔙 Return to Seeders Menu';
 
 // Navigation menu items
-export const EXIT_CLI = kleur.red('Exit');
-export const GO_BACK_MAIN_MENU = 'Go back to the main menu';
-export const GO_BACK_SERVICE_MENU = 'Go back to the service menu';
+export const EXIT_CLI = '❌ Exit';
+export const GO_BACK_MAIN_MENU = '🔙 Return to Main Menu';
+export const GO_BACK_SERVICE_MENU = '🔙 Return to Service Menu';
+export const GO_BACK_SELECTED_DATABASE_MENU =
+  '🔙 Return to Selected Database Menu';
 
-// Manage actions menu
-
-export const GO_BACK_MIGRATION_MENU = 'Go back to the migration menu';
-export const GO_BACK_SEED_MENU = 'Go back to the seed menu';
+export const GO_BACK_BACKUPS_PURGE_MENU = '🔙 Return to Backups & Purge Menu';
