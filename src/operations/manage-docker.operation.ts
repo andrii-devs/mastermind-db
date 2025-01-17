@@ -240,3 +240,63 @@ export async function aksForStartDockerCompose(serviceKey: string) {
     }
   }
 }
+
+export async function stopDockerContainer(containerName: string) {
+  const spinner = createSpinner(
+    kleur.cyan(`Stopping Docker container: ${containerName}`),
+  ).start();
+  await new Promise((resolve) => setTimeout(resolve, 1500));
+  try {
+    await execAsync(`docker stop ${containerName}`);
+    spinner.info(
+      kleur.green(`Docker container ${containerName} stopped successfully`),
+    );
+  } catch (err) {
+    spinner.error(
+      kleur.red(`Failed to stop Docker container "${containerName}": ${err}`),
+    );
+  }
+}
+
+export async function refreshDockerContainer(containerName: string) {
+  const spinner = createSpinner(
+    kleur.cyan(`Refreshing Docker container: ${containerName}`),
+  ).start();
+  await new Promise((resolve) => setTimeout(resolve, 1500));
+
+  try {
+    spinner.stop();
+    await stopDockerContainer(containerName);
+    spinner.start();
+    await execAsync(`docker rm ${containerName}`);
+    await execAsync(`docker compose up -d ${containerName}`);
+    spinner.success(
+      kleur.green(`Docker container ${containerName} refreshed successfully`),
+    );
+  } catch (err) {
+    spinner.error(
+      kleur.red(
+        `Failed to refresh Docker container "${containerName}": ${err}`,
+      ),
+    );
+  }
+}
+
+export async function purgeDockerContainer(containerName: string) {
+  const spinner = createSpinner(
+    kleur.cyan(`Purging Docker container: ${containerName}`),
+  ).start();
+  await new Promise((resolve) => setTimeout(resolve, 1500));
+
+  try {
+    await execAsync(`docker stop ${containerName}`);
+    await execAsync(`docker rm -v ${containerName}`);
+    spinner.success(
+      kleur.green(`Docker container ${containerName} purged successfully`),
+    );
+  } catch (err) {
+    spinner.error(
+      kleur.red(`Failed to purge Docker container "${containerName}": ${err}`),
+    );
+  }
+}
