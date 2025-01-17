@@ -3,9 +3,17 @@ import { getDynamicSeparator } from '../../../utils/strings.utils';
 import inquirer from 'inquirer';
 import {
   exportDatabaseDump,
+  importDatabaseDump,
   resetDatabase,
 } from '../../../operations/database.operation';
 import { getConfigPaths } from '../../../helper/mastermind-config.helper';
+import {
+  EXIT_CLI,
+  GO_BACK_SELECTED_DATABASE_MENU,
+  GO_BACK_SERVICE_MENU,
+} from '../../../utils/const.utils';
+import { manageSelectedService } from '../../../core/existing-service.core';
+import kleur from 'kleur';
 
 export async function manageSelectedServiceDatabase(serviceName: string) {
   const { database } = getConfigPaths(serviceName);
@@ -34,8 +42,8 @@ export async function manageSelectedServiceDatabase(serviceName: string) {
         },
         new inquirer.Separator(getDynamicSeparator()),
         {
-          name: `🔙 Return to the service ${serviceName} Menu`,
-          value: 'main',
+          name: GO_BACK_SERVICE_MENU,
+          value: 'menu',
           description: 'Go back to the service menu.',
         },
         {
@@ -50,18 +58,52 @@ export async function manageSelectedServiceDatabase(serviceName: string) {
   switch (dbAction) {
     case 'export':
       await exportDatabaseDump(serviceName);
+      await askForReturnOrExit(serviceName);
       break;
     case 'import':
+      await importDatabaseDump(serviceName, database, `${serviceName}_db`);
+      await askForReturnOrExit(serviceName);
+
       break;
     case 'reset':
       await resetDatabase(serviceName, database);
+      await askForReturnOrExit(serviceName);
+
       break;
 
-    case 'main':
+    case 'menu':
+      await manageSelectedService(serviceName);
       break;
     case 'exit':
-      break;
+      logger.success(kleur.bold('\nThank you for using Master Mind DB 🛠️'));
+      process.exit(0);
 
+    default:
+      logger.error('Invalid option selected.');
+      break;
+  }
+}
+
+async function askForReturnOrExit(serviceName: string) {
+  const { nextAction } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'nextAction',
+      message: 'What would you like to do next?',
+      choices: [
+        { name: GO_BACK_SELECTED_DATABASE_MENU, value: 'menu' },
+        { name: EXIT_CLI, value: 'exit' },
+      ],
+    },
+  ]);
+
+  switch (nextAction) {
+    case 'menu':
+      await manageSelectedServiceDatabase(serviceName);
+      break;
+    case 'exit':
+      logger.success(kleur.bold('\nThank you for using Master Mind DB 🛠️'));
+      process.exit(0);
     default:
       logger.error('Invalid option selected.');
       break;
