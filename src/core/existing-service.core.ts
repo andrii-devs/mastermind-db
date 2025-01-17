@@ -5,12 +5,16 @@ import { manageORMService } from '../services/existingService/orm/manage-orm.ser
 import {
   EXIT_CLI,
   GO_BACK_MAIN_MENU,
+  MANAGE_BACKUPS_AND_PURGE,
   MANAGE_DATABASE_OPERATIONS,
   MANAGE_DOCKER_CONTAINERS,
   MANAGE_ORM_FILES,
 } from '../utils/const.utils';
 import { getDynamicSeparator } from '../utils/strings.utils';
 import { manageSelectedServiceDatabase } from '../services/existingService/database/manage-selected-database.service';
+import kleur from 'kleur';
+import { manageSelectedDockerService } from '../services/existingService/docker/manage-selected-docker.service';
+import { manageBackupAndDataPurge } from '../services/existingService/backups/manage-backups-and-data-purge.service';
 
 export async function manageExistingService() {
   const projectConfig = loadProjectConfig();
@@ -23,19 +27,23 @@ export async function manageExistingService() {
     return;
   }
 
+  const updatedChoice = Object.keys(projectConfig.services).map(
+    (service: string) => ({ name: `📁 ${service}`, value: service }),
+  );
+
   const { serviceName } = await inquirer.prompt([
     {
       type: 'list',
       name: 'serviceName',
       message: 'Select an existing service to manage:',
-      choices: Object.keys(projectConfig.services),
+      choices: updatedChoice,
     },
   ]);
 
   await manageSelectedService(serviceName);
 }
 
-async function manageSelectedService(serviceName: string) {
+export async function manageSelectedService(serviceName: string) {
   const { action } = await inquirer.prompt([
     {
       type: 'list',
@@ -59,6 +67,10 @@ async function manageSelectedService(serviceName: string) {
           description:
             'Perform database operations like export, import, or reset data.',
         },
+        {
+          name: MANAGE_BACKUPS_AND_PURGE,
+          value: 'manageBackups',
+        },
         new inquirer.Separator(getDynamicSeparator()),
         {
           name: GO_BACK_MAIN_MENU,
@@ -78,16 +90,22 @@ async function manageSelectedService(serviceName: string) {
       await manageORMService(serviceName);
       break;
     case 'docker':
+      await manageSelectedDockerService(serviceName);
       break;
 
     case 'database':
       await manageSelectedServiceDatabase(serviceName);
       break;
 
+    case 'manageBackups':
+      await manageBackupAndDataPurge(serviceName);
+      break;
+
     case 'main':
       break;
     case 'exit':
-      break;
+      logger.success(kleur.bold('\nThank you for using Master Mind DB 🛠️'));
+      process.exit(0);
 
     default:
       logger.error('Invalid option selected.');
