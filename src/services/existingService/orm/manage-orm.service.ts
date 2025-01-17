@@ -14,6 +14,7 @@ import { manageSeedersAction } from './sequelize/manage-seeders.service';
 import { manageMigrationsAction } from './sequelize/manage-migration.service';
 import { runCLI } from '../../../cmd/cli';
 import { getDynamicSeparator } from '../../../utils/strings.utils';
+import { manageSelectedService } from '../../../core/existing-service.core';
 
 export async function manageORMService(
   serviceName: string,
@@ -33,44 +34,7 @@ export async function manageORMService(
 
   switch (orm) {
     case 'Sequelize':
-      const { action } = await inquirer.prompt([
-        {
-          type: 'list',
-          name: 'action',
-          message: `Select an action for service "${serviceName}?" (${orm}):`,
-          choices: [
-            {
-              name: GENERATE_FILES,
-              value: 'generate',
-              description:
-                'Generate new Sequelize files, such as migrations, models, and seeders for your project.',
-            },
-            {
-              name: MANAGE_MIGRATIONS,
-              value: 'migrations',
-              description:
-                'View and manage existing database migrations to keep your schema up to date.',
-            },
-            {
-              name: MANAGE_SEEDERS,
-              value: 'seeders',
-              description:
-                'Add or modify seeders for populating your database with default or test data.',
-            },
-            new inquirer.Separator(getDynamicSeparator()),
-
-            { name: GO_BACK_MAIN_MENU, value: 'menu' },
-            {
-              name: EXIT_CLI,
-              value: 'exit',
-              description: 'Quit the CLI application.',
-            },
-          ],
-          loop: false,
-        },
-      ]);
-
-      await manageSequelizeAction(serviceName, action);
+      await manageSequelizeAction(serviceName, orm);
       break;
 
     default:
@@ -79,8 +43,45 @@ export async function manageORMService(
   }
 }
 
-async function manageSequelizeAction(serviceName: string, choice: string) {
-  switch (choice) {
+async function manageSequelizeAction(serviceName: string, orm: string) {
+  const { action } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'action',
+      message: `Select an action for service "${serviceName}?" (${orm}):`,
+      choices: [
+        {
+          name: GENERATE_FILES,
+          value: 'generate',
+          description:
+            'Generate new Sequelize files, such as migrations, models, and seeders for your project.',
+        },
+        {
+          name: MANAGE_MIGRATIONS,
+          value: 'migrations',
+          description:
+            'View and manage existing database migrations to keep your schema up to date.',
+        },
+        {
+          name: MANAGE_SEEDERS,
+          value: 'seeders',
+          description:
+            'Add or modify seeders for populating your database with default or test data.',
+        },
+        new inquirer.Separator(getDynamicSeparator()),
+
+        { name: GO_BACK_SERVICE_MENU, value: 'menu' },
+        {
+          name: EXIT_CLI,
+          value: 'exit',
+          description: 'Quit the CLI application.',
+        },
+      ],
+      loop: false,
+    },
+  ]);
+
+  switch (action) {
     case 'generate':
       await generateSequelizeAction(serviceName);
       await askForReturnOrExit(serviceName);
@@ -94,9 +95,8 @@ async function manageSequelizeAction(serviceName: string, choice: string) {
       await manageSeedersAction(serviceName);
       break;
     case 'menu':
-      await runCLI();
-      return;
-
+      await manageSelectedService(serviceName);
+      break;
     case 'exit':
       logger.success('Exiting Master Mind DB. Goodbye!');
       process.exit(0);
