@@ -64,7 +64,7 @@ export function addOrUpdateProjectConfig(
   saveProjectConfig(projectConfig);
 }
 
-interface IConfigPath {
+export interface IConfigPath {
   rootDir: string;
   database: string;
   orm: string;
