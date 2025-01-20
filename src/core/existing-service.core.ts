@@ -15,6 +15,7 @@ import { manageSelectedServiceDatabase } from '../services/existingService/datab
 import kleur from 'kleur';
 import { manageSelectedDockerService } from '../services/existingService/docker/manage-selected-docker.service';
 import { manageBackupAndDataPurge } from '../services/existingService/backups/manage-backups-and-data-purge.service';
+import { runCLI } from '../cmd/cli';
 
 export async function manageExistingService() {
   const projectConfig = loadProjectConfig();
@@ -102,6 +103,7 @@ export async function manageSelectedService(serviceName: string) {
       break;
 
     case 'main':
+      await runCLI();
       break;
     case 'exit':
       logger.success(kleur.bold('\nThank you for using Master Mind DB 🛠️'));

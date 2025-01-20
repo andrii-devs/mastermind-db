@@ -7,12 +7,14 @@ import {
   EXIT_CLI,
   GO_BACK_SEED_MENU,
   GO_BACK_SERVICE_MENU,
+  RETURN_ORM_MENU,
   UNDO_ALL_SEED,
   UNDO_LATEST_SEED,
 } from '../../../../utils/const.utils';
 import { manageORMService } from '../manage-orm.service';
 import { getDynamicSeparator } from '../../../../utils/strings.utils';
 import { runSequelizeCommand } from '../../../../operations/sequelize-files.operation';
+import kleur from 'kleur';
 
 export async function manageSeedersAction(serviceName: string): Promise<void> {
   const projectConfig = loadProjectConfig();
@@ -124,16 +126,16 @@ async function askForReturnOrExit(
       type: 'list',
       name: 'nextAction',
       message: 'What would you like to do next?',
-      choices: [GO_BACK_SEED_MENU, GO_BACK_SERVICE_MENU, EXIT_CLI],
+      choices: [GO_BACK_SEED_MENU, RETURN_ORM_MENU, EXIT_CLI],
     },
   ]);
 
   if (nextAction === GO_BACK_SEED_MENU) {
     await seedersAction(serviceName, servicePath, environment);
-  } else if (nextAction === GO_BACK_SERVICE_MENU) {
-    return;
+  } else if (nextAction === RETURN_ORM_MENU) {
+    await manageORMService(serviceName);
   } else {
-    logger.success('Exiting Master Mind DB. Goodbye!');
+    logger.success(kleur.bold('\nThank you for using Master Mind DB 🛠️'));
     process.exit(0);
   }
 }

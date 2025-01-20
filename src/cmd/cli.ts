@@ -10,6 +10,7 @@ import {
   CREATE_SERVICE,
   DELETE_SERVICE,
   EXIT_CLI,
+  GO_BACK_MAIN_MENU,
   MANAGE_EXISTING_SERVICE,
 } from '../utils/const.utils';
 import { manageExistingService } from '../core/existing-service.core';
@@ -109,7 +110,7 @@ async function askForReturnOrExit() {
       name: 'choice',
       message: 'What would you like to do next?',
       choices: [
-        { name: 'Go back to the main menu', value: 'menu' },
+        { name: GO_BACK_MAIN_MENU, value: 'menu' },
         { name: 'Exit', value: EXIT_CLI },
       ],
     },
