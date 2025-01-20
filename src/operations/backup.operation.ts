@@ -1,5 +1,8 @@
 import path from 'path';
-import { getConfigPaths } from '../helper/mastermind-config.helper';
+import {
+  getConfigPaths,
+  getRelativePath,
+} from '../helper/mastermind-config.helper';
 import { createSpinner, Spinner } from 'nanospinner';
 import kleur from 'kleur';
 import fs from 'fs-extra';
@@ -165,11 +168,6 @@ export async function configureSystemCronBackup(
     'scripts',
   );
   await fs.ensureDir(backupScriptDir);
-  spinner.info(
-    kleur.cyan(
-      `Ensure backups scripts folder exists: ${kleur.bold(configFilePath)})`,
-    ),
-  );
 
   const scriptPath = await ensureBackupScriptExists(backupScriptDir, spinner);
   const cronCommand = `${cronExpression} export MYSQL_ROOT_PASSWORD=root_password && bash ${path.resolve(
@@ -290,11 +288,19 @@ export async function removeBackupCronJob(serviceName: string) {
 async function ensureBackupScriptExists(scriptDir: string, spinner: Spinner) {
   const scriptPath = path.join(process.cwd(), scriptDir, 'backup.sh');
   if (await fs.pathExists(scriptPath)) {
-    spinner.info(kleur.cyan(`Backup script already exists: ${scriptPath}`));
+    spinner.info(
+      kleur.cyan(
+        `Backup script already exists: ${kleur.bold(getRelativePath(process.cwd(), scriptPath))}`,
+      ),
+    );
     return scriptPath;
   }
 
-  spinner.info(kleur.cyan(`Creating backup script at: ${scriptPath}`));
+  spinner.info(
+    kleur.cyan(
+      `Creating backup script at: ${kleur.bold(getRelativePath(process.cwd(), scriptPath))}`,
+    ),
+  );
   const scriptContent = `
 #!/bin/bash
 
